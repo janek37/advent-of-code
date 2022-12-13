@@ -2,7 +2,7 @@ import re
 from collections import defaultdict
 from dataclasses import dataclass
 from functools import reduce
-from typing import Iterable, List, Dict
+from typing import Iterable
 import aocd
 
 MONKEY_REGEX = re.compile(
@@ -18,16 +18,16 @@ MONKEY_REGEX = re.compile(
 @dataclass
 class Monkey:
     id: int
-    operation: List[str]
+    operation: list[str]
     test_divisible_by: int
     if_true: int
     if_false: int
-    items: List[int]
+    items: list[int]
     inspected_count: int = 0
     calm: bool = True
     modulo: int = None
 
-    def inspect_items(self) -> Dict[int, List[int]]:
+    def inspect_items(self) -> dict[int, list[int]]:
         thrown_items = defaultdict(list)
         for item in self.items:
             item = self.new_worry_level(item)

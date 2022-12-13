@@ -1,10 +1,10 @@
 import re
 import sys
-from typing import Iterable, Tuple
+from typing import Iterable
 
 RANGE_REGEX = re.compile(r'(\d+)-(\d+)')
 
-Range = Tuple[int, int]
+Range = tuple[int, int]
 
 
 def parse_range(s: str) -> Range:
@@ -12,7 +12,7 @@ def parse_range(s: str) -> Range:
     return int(g1), int(g2)
 
 
-def parse_input(lines: Iterable[str]) -> Iterable[Tuple[Range, Range]]:
+def parse_input(lines: Iterable[str]) -> Iterable[tuple[Range, Range]]:
     for line in lines:
         yield tuple(parse_range(part) for part in line.split(','))
 

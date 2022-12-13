@@ -1,6 +1,6 @@
 import sys
 from enum import Enum
-from typing import Iterable, Tuple, Generator
+from typing import Iterable, Generator
 
 
 class Outcome(Enum):
@@ -60,23 +60,23 @@ class RPS(Enum):
             return cls.SCISSORS
 
 
-def parse_input(lines: Iterable[str]) -> Generator[Tuple[RPS, str], None, None]:
+def parse_input(lines: Iterable[str]) -> Generator[tuple[RPS, str], None, None]:
     for line in lines:
         they, me = line.split()
         yield RPS.from_str(they), me
 
 
-def simple_plays(code: Iterable[Tuple[RPS, str]]) -> Generator[Tuple[RPS, RPS], None, None]:
+def simple_plays(code: Iterable[tuple[RPS, str]]) -> Generator[tuple[RPS, RPS], None, None]:
     for they, me in code:
         yield they, RPS.from_str(me)
 
 
-def advanced_plays(code: Iterable[Tuple[RPS, str]]) -> Generator[Tuple[RPS, RPS], None, None]:
+def advanced_plays(code: Iterable[tuple[RPS, str]]) -> Generator[tuple[RPS, RPS], None, None]:
     for they, me in code:
         yield they, they.play(Outcome.from_str(me))
 
 
-def scores(plays: Iterable[Tuple[RPS, RPS]]) -> Generator[int, None, None]:
+def scores(plays: Iterable[tuple[RPS, RPS]]) -> Generator[int, None, None]:
     for they, me in plays:
         yield me.score(they)
 

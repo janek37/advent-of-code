@@ -1,10 +1,10 @@
 import sys
-from typing import Iterable, Optional, Tuple
+from typing import Iterable
 
 DISPLAY_WIDTH = 40
 
 
-def parse_input(lines: Iterable[str]) -> Iterable[Optional[int]]:
+def parse_input(lines: Iterable[str]) -> Iterable[int | None]:
     for line in lines:
         line = line.strip()
         if line == 'noop':
@@ -13,7 +13,7 @@ def parse_input(lines: Iterable[str]) -> Iterable[Optional[int]]:
             yield int(line.split()[1])
 
 
-def simulate_cycles(instructions: Iterable[Optional[int]]) -> Iterable[int]:
+def simulate_cycles(instructions: Iterable[int | None]) -> Iterable[int]:
     x = 1
     for instruction in instructions:
         yield x

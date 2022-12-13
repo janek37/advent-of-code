@@ -1,5 +1,5 @@
 import sys
-from typing import Iterable, Tuple, List
+from typing import Iterable
 
 DIRECTIONS = {
     'D': (0, -1),
@@ -9,13 +9,13 @@ DIRECTIONS = {
 }
 
 
-def parse_input(lines: Iterable[str]) -> Iterable[Tuple[Tuple[int, int], int]]:
+def parse_input(lines: Iterable[str]) -> Iterable[tuple[tuple[int, int], int]]:
     for line in lines:
         direction, steps = line.split()
         yield DIRECTIONS[direction], int(steps)
 
 
-def simulate_rope(moves: Iterable[Tuple[Tuple[int, int], int]], rope_length: int) -> Iterable[Tuple[int, int]]:
+def simulate_rope(moves: Iterable[tuple[tuple[int, int], int]], rope_length: int) -> Iterable[tuple[int, int]]:
     knots = [(0, 0)] * rope_length
     for direction, steps in moves:
         for _ in range(steps):
@@ -23,7 +23,7 @@ def simulate_rope(moves: Iterable[Tuple[Tuple[int, int], int]], rope_length: int
             yield knots[-1]
 
 
-def simulate_move(direction: Tuple[int, int], knots: List[Tuple[int, int]]) -> None:
+def simulate_move(direction: tuple[int, int], knots: list[tuple[int, int]]) -> None:
     delta_x, delta_y = direction
     head_x, head_y = knots[0]
     knots[0] = head_x + delta_x, head_y + delta_y
@@ -32,7 +32,7 @@ def simulate_move(direction: Tuple[int, int], knots: List[Tuple[int, int]]) -> N
         knots[i+1] = update_knot(previous_knot, knot)
 
 
-def update_knot(new_head: Tuple[int, int], tail: Tuple[int, int]) -> Tuple[int, int]:
+def update_knot(new_head: tuple[int, int], tail: tuple[int, int]) -> tuple[int, int]:
     head_x, head_y = new_head
     tail_x, tail_y = tail
     touching = abs(head_x - tail_x) <= 1 and abs(head_y - tail_y) <= 1

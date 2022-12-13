@@ -1,11 +1,11 @@
 import re
 import sys
-from typing import Iterable, Tuple, List
+from typing import Iterable
 
 MOVE_REGEX = re.compile(r'move (\d+) from (\d+) to (\d+)')
 
 
-def parse_input(lines: Iterable[str]) -> Tuple[List[List[str]], Iterable[Tuple[int, int, int]]]:
+def parse_input(lines: Iterable[str]) -> tuple[list[list[str]], Iterable[tuple[int, int, int]]]:
     stack_lines = []
     for line in lines:
         if line.strip() == '':
@@ -16,7 +16,7 @@ def parse_input(lines: Iterable[str]) -> Tuple[List[List[str]], Iterable[Tuple[i
     return stacks, moves
 
 
-def parse_stacks(stack_lines: List[str]) -> List[List[str]]:
+def parse_stacks(stack_lines: list[str]) -> list[list[str]]:
     stack_count = len(stack_lines[-1]) // 4
     stacks = [[] for _ in range(stack_count)]
     for line in stack_lines[-2::-1]:
@@ -27,13 +27,13 @@ def parse_stacks(stack_lines: List[str]) -> List[List[str]]:
     return stacks
 
 
-def parse_moves(lines: Iterable[str]) -> Iterable[Tuple[int, int, int]]:
+def parse_moves(lines: Iterable[str]) -> Iterable[tuple[int, int, int]]:
     for line in lines:
         amount, from_stack, to_stack = MOVE_REGEX.match(line).groups()
         yield int(amount), int(from_stack) - 1, int(to_stack) - 1
 
 
-def move_crates(stacks: List[List[str]], from_stack: int, to_stack: int, amount: int = 1) -> None:
+def move_crates(stacks: list[list[str]], from_stack: int, to_stack: int, amount: int = 1) -> None:
     crates = stacks[from_stack][-amount:]
     del stacks[from_stack][-amount:]
     stacks[to_stack].extend(crates)

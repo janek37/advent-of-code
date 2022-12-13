@@ -24,7 +24,11 @@ def top_three(elves):
     return sum(sorted_elves[:3])
 
 
-if __name__ == '__main__':
+def main():
     elves = parse_input(sys.stdin)
     print(most_calories(elves))
     print(top_three(elves))
+
+
+if __name__ == '__main__':
+    main()

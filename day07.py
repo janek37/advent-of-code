@@ -1,6 +1,6 @@
 import sys
 from dataclasses import dataclass
-from typing import Iterable, Union, List, Optional, MutableMapping
+from typing import Iterable, Optional, MutableMapping
 
 
 @dataclass
@@ -25,7 +25,7 @@ class Dir:
 @dataclass
 class Directory:
     parent: Optional["Directory"]
-    contents: MutableMapping[str, Union[File, "Directory"]]
+    contents: MutableMapping[str, File | "Directory"]
 
     def total_size(self):
         return sum(item.total_size() for item in self.contents.values())
@@ -33,10 +33,10 @@ class Directory:
 
 @dataclass
 class LS:
-    output: List[Union[File, Dir]]
+    output: list[File | Dir]
 
 
-def parse_input(lines: Iterable[str]) -> Iterable[Union[CD, LS]]:
+def parse_input(lines: Iterable[str]) -> Iterable[CD | LS]:
     current_ls = None
     for line in lines:
         line = line.strip()
@@ -59,7 +59,7 @@ def parse_input(lines: Iterable[str]) -> Iterable[Union[CD, LS]]:
         yield current_ls
 
 
-def parse_directory_structure(commands: Iterable[Union[CD, LS]]) -> Directory:
+def parse_directory_structure(commands: Iterable[CD | LS]) -> Directory:
     root = Directory(parent=None, contents={})
     current_dir = root
     for command in commands:

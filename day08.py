@@ -1,13 +1,13 @@
 import sys
-from typing import Iterable, List, Tuple, Set
+from typing import Iterable
 
 
-def parse_input(lines: Iterable[str]) -> Iterable[List[int]]:
+def parse_input(lines: Iterable[str]) -> Iterable[list[int]]:
     for line in lines:
         yield [int(ch) for ch in line.strip()]
 
 
-def visible(row: Iterable[Tuple[int, int]]) -> Iterable[int]:
+def visible(row: Iterable[tuple[int, int]]) -> Iterable[int]:
     tallest_so_far = -1
     for i, tree in row:
         if tree > tallest_so_far:
@@ -15,7 +15,7 @@ def visible(row: Iterable[Tuple[int, int]]) -> Iterable[int]:
             yield i
 
 
-def visible_from_direction(trees: List[List[int]], horizontal: bool, reverse: bool) -> Iterable[Tuple[int, int]]:
+def visible_from_direction(trees: list[list[int]], horizontal: bool, reverse: bool) -> Iterable[tuple[int, int]]:
     step = -1 if reverse else 1
     if horizontal:
         for i, row in enumerate(trees):
@@ -28,7 +28,7 @@ def visible_from_direction(trees: List[List[int]], horizontal: bool, reverse: bo
                 yield x, visible_y
 
 
-def all_visible(trees: List[List[int]]) -> Set[Tuple[int, int]]:
+def all_visible(trees: list[list[int]]) -> set[tuple[int, int]]:
     v = set()
     for horizontal in (True, False):
         for reverse in (True, False):
@@ -45,7 +45,7 @@ def viewing_distance(height, row: Iterable[int]) -> int:
     return dist
 
 
-def viewing_distance_from_direction(trees: List[List[int]], x: int, y: int, horizontal: bool, reverse: bool) -> int:
+def viewing_distance_from_direction(trees: list[list[int]], x: int, y: int, horizontal: bool, reverse: bool) -> int:
     step = -1 if reverse else 1
     height = trees[y][x]
     if horizontal:
@@ -55,7 +55,7 @@ def viewing_distance_from_direction(trees: List[List[int]], x: int, y: int, hori
         return viewing_distance(height, column[y+step::step])
 
 
-def scenic_score(trees: List[List[int]], x: int, y: int):
+def scenic_score(trees: list[list[int]], x: int, y: int):
     score = 1
     for horizontal in (True, False):
         for reverse in (True, False):
@@ -63,7 +63,7 @@ def scenic_score(trees: List[List[int]], x: int, y: int):
     return score
 
 
-def best_spot(trees: List[List[int]]) -> Tuple[int, int]:
+def best_spot(trees: list[list[int]]) -> tuple[int, int]:
     best_score = 0
     for y in range(len(trees)):
         for x in range(len(trees[0])):
