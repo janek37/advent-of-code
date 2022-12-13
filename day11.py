@@ -1,9 +1,9 @@
 import re
+import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from functools import reduce
 from typing import Iterable
-import aocd
 
 MONKEY_REGEX = re.compile(
     r'Monkey (\d+):\n'
@@ -94,7 +94,7 @@ def monkey_business(monkeys, rounds):
 
 
 def main():
-    data = aocd.get_data(year=2022)
+    data = sys.stdin.read()
     monkeys = list(parse_input(data))
     print(monkey_business(monkeys, 20))
     modulo = reduce(lambda a, b: a * b, (monkey.test_divisible_by for monkey in monkeys))

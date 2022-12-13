@@ -1,7 +1,6 @@
 import sys
 from heapq import heappush, heappop, heapify
 from typing import Iterable
-import aocd
 
 Vertex = tuple[int, int]
 
@@ -80,7 +79,7 @@ def get_path(prev: dict[Vertex, Vertex], start: Vertex, end: Vertex) -> list[Ver
 
 
 def main():
-    data = aocd.get_data(year=2022)
+    data = sys.stdin.read()
     heightmap, start, end = parse_input(data.strip().split('\n'))
     dist, prev = dijkstra(heightmap, end)
     print(len(get_path(prev, start, end)))
