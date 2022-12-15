@@ -77,7 +77,7 @@ def get_joined_intervals(intervals: Iterable[tuple[int, int]]):
             joined_intervals.append((min_diff, max_diff))
         else:
             last_interval = joined_intervals[-1]
-            if min_diff > last_interval[1]:
+            if min_diff > last_interval[1] + 1:
                 joined_intervals.append((min_diff, max_diff))
             elif max_diff > last_interval[1]:
                 joined_intervals[-1] = (last_interval[0], max_diff)
