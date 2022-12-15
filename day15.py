@@ -46,31 +46,50 @@ def check_sum(position_sum: int, constraints: Iterable[tuple[int, int, int, int]
     applicable_constraints = [c for c in constraints if c[0] <= position_sum <= c[1]]
     diff_intervals = ((c1, c2) for _, _, c1, c2 in applicable_constraints)
     joined_intervals = get_joined_intervals(diff_intervals)
-    middle_intervals = [interval for interval in joined_intervals if interval[0] <= 0 <= interval[1]]
-    if not middle_intervals:
+    middle_interval = get_middle_interval(joined_intervals)
+    if not middle_interval:
         return False, 0
+    missing_point = get_missing_point(middle_interval, difference_radius, position_sum)
+    if missing_point is not None:
+        return False, missing_point
+    return True, get_next_sum_to_check(applicable_constraints, position_sum, middle_interval)
+
+
+def get_middle_interval(intervals: Iterable[tuple[int, int]]) -> tuple[int, int] | None:
+    middle_intervals = [interval for interval in intervals if interval[0] <= 0 <= interval[1]]
+    if not middle_intervals:
+        return None
     assert len(middle_intervals) == 1
-    middle_interval = middle_intervals[0]
-    if middle_interval[0] > -difference_radius or middle_interval[1] < difference_radius:
-        if middle_interval[0] > -difference_radius:
-            missing_point = middle_interval[0] - 1
+    return middle_intervals[0]
+
+
+def get_missing_point(interval: tuple[int, int], difference_radius: int, position_sum: int) -> int | None:
+    if interval[0] > -difference_radius or interval[1] < difference_radius:
+        if interval[0] > -difference_radius:
+            missing_point = interval[0] - 1
             if (missing_point - position_sum) % 2 != 0:
                 missing_point -= 1
         else:
-            missing_point = middle_interval[1] + 1
+            missing_point = interval[1] + 1
             if (missing_point - position_sum) % 2 != 0:
                 missing_point += 1
-        return False, missing_point
-    min_max_sum = min(c for _, c, _, _ in applicable_constraints)
+        return missing_point
+
+
+def get_next_sum_to_check(
+    constraints: Iterable[tuple[int, int, int, int]],
+    position_sum: int,
+    interval: tuple[int, int]
+) -> int:
+    min_max_sum = min(c for _, c, _, _ in constraints)
     if position_sum < 4_000_000:
-        middle_radius = min(-middle_interval[0], middle_interval[1])
-        next_sum_to_check = min(min_max_sum, middle_radius, 4_000_000) + 1
+        middle_radius = min(-interval[0], interval[1])
+        return min(min_max_sum, middle_radius, 4_000_000) + 1
     else:
-        next_sum_to_check = min_max_sum + 1
-    return True, next_sum_to_check
+        return min_max_sum + 1
 
 
-def get_joined_intervals(intervals: Iterable[tuple[int, int]]):
+def get_joined_intervals(intervals: Iterable[tuple[int, int]]) -> list[tuple[int, int]]:
     joined_intervals = []
     for min_diff, max_diff in sorted(intervals):
         if not joined_intervals:
