@@ -46,19 +46,16 @@ def get_outer_side_count(cubes: list[Position]) -> int:
     x_range, y_range, z_range = get_ranges(cubes)
     steam = get_initial_steam(x_range, y_range, z_range)
     cubes_set = set(cubes)
-    new_steam = True
     outer_side_count = 0
-    while new_steam:
-        new_steam = False
-        for x in x_range:
-            for y in y_range:
-                for z in z_range:
-                    if (x, y, z) not in cubes_set and (x, y, z) not in steam:
-                        adjacent_cubes = get_adjacent_cubes((x, y, z))
-                        if any(cube in steam for cube in adjacent_cubes):
-                            steam.add((x, y, z))
-                            new_steam = True
-                            outer_side_count += sum(1 for cube in adjacent_cubes if cube in cubes_set)
+    positions_to_fill = [(x_range.start, y_range.start, z_range.start)]
+    while positions_to_fill:
+        position = positions_to_fill.pop()
+        if position not in cubes_set and position not in steam:
+            adjacent_cubes = get_adjacent_cubes(position)
+            if any(cube in steam for cube in adjacent_cubes):
+                steam.add(position)
+                outer_side_count += sum(1 for cube in adjacent_cubes if cube in cubes_set)
+            positions_to_fill.extend(adjacent_cubes)
     return outer_side_count
 
 
