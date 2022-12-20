@@ -103,7 +103,6 @@ class Blueprint:
 class RobotFactory:
     def __init__(self, blueprint: Blueprint):
         self.blueprint = blueprint
-        self._memoized_max_geode_count = {}
 
     @cache
     def quick_upper_bound(self, time: int, obsidian: int, obsidian_robots: int) -> int:
@@ -125,30 +124,30 @@ class RobotFactory:
     def max_geode_count(self, time: int, inventory: Inventory, best_to_beat: int = 0) -> int:
         if time <= 1:
             return 0
-        key = self.key(time, inventory)
-        if key in self._memoized_max_geode_count:
-            return self._memoized_max_geode_count[key]
         obsidian_potential = inventory.obsidian + (time - 2) * inventory.obsidian_robots + (time - 2) * (time - 3) // 2
         if obsidian_potential < self.blueprint.geode_robot_cost_obsidian:
             return 0
         if self.quick_upper_bound(time, inventory.obsidian, inventory.obsidian_robots) < best_to_beat:
             return 0
-        inventory_after_production = inventory.produce()
-        best = self.max_geode_count(time - 1, inventory_after_production, best_to_beat)
-        if best > best_to_beat:
-            best_to_beat = best
+        best = 0
         for robot_type in RobotType:
-            geode_count = 0
-            if self.blueprint.can_afford(robot_type, inventory) and self.need_more(robot_type, time, inventory):
-                new_inventory = self.blueprint.build_robot(robot_type, inventory_after_production)
-                if robot_type == RobotType.GEODE:
-                    geode_count += time - 1
-                geode_count += self.max_geode_count(time - 1, new_inventory, best_to_beat - geode_count)
-                if geode_count > best:
-                    best = geode_count
-                    if best > best_to_beat:
-                        best_to_beat = best
-        self._memoized_max_geode_count[key] = best
+            if self.need_more(robot_type, time, inventory):
+                new_time = time
+                new_inventory = inventory
+                while not self.blueprint.can_afford(robot_type, new_inventory) and new_time > 1:
+                    new_inventory = new_inventory.produce()
+                    new_time -= 1
+                if new_time > 1:
+                    new_inventory = new_inventory.produce()
+                    new_inventory = self.blueprint.build_robot(robot_type, new_inventory)
+                    geode_count = 0
+                    if robot_type == RobotType.GEODE:
+                        geode_count += new_time - 1
+                    geode_count += self.max_geode_count(new_time - 1, new_inventory, best_to_beat - geode_count)
+                    if geode_count > best:
+                        best = geode_count
+                        if best > best_to_beat:
+                            best_to_beat = best
         return best
 
     def need_more(self, robot_type: RobotType, time: int, inventory: Inventory) -> bool:
