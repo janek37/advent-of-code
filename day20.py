@@ -21,12 +21,12 @@ def mix(f: list[int]) -> list[int]:
     return [v for v, moved in temp_f]
 
 
-def mix_with_indices(f: list[tuple[int, int]]):
-    for orig_i in range(len(f)):
-        i = next(i for i, (orig_index, value) in enumerate(f) if orig_index == orig_i)
-        value = f.pop(i)
-        new_i = (i + value[1]) % len(f)
-        f.insert(new_i, value)
+def mix_with_indices(orig: list[tuple[int, int]], f: list[tuple[int, int]]):
+    for orig_item in orig:
+        i = f.index(orig_item)
+        del f[i]
+        new_i = (i + orig_item[1]) % len(f)
+        f.insert(new_i, orig_item)
 
 
 def get_coordinates(f: list[int]):
@@ -39,8 +39,9 @@ def main():
     print(get_coordinates(mix(encrypted)))
     key = 811589153
     new_encrypted = list(enumerate(v * key for v in encrypted))
+    orig_new_encrypted = list(new_encrypted)
     for i in range(10):
-        mix_with_indices(new_encrypted)
+        mix_with_indices(orig_new_encrypted, new_encrypted)
     decrypted = [v for i, v in new_encrypted]
     print(get_coordinates(decrypted))
 
