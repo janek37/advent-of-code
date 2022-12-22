@@ -2,7 +2,7 @@ import re
 import sys
 from dataclasses import dataclass
 from enum import Enum
-from typing import Iterable, Iterator, Callable
+from typing import Iterable, Iterator
 
 Path = Iterable[int | str]
 
@@ -47,24 +47,13 @@ class Facing(Enum):
     RIGHT = (1, 0)
 
     def rotate(self, direction: str):
+        x, y = self.value
         if direction == 'R':
-            if self == Facing.UP:
-                return Facing.RIGHT
-            if self == Facing.RIGHT:
-                return Facing.DOWN
-            if self == Facing.DOWN:
-                return Facing.LEFT
-            if self == Facing.LEFT:
-                return Facing.UP
+            return Facing((-y, x))
         elif direction == 'L':
-            if self == Facing.UP:
-                return Facing.LEFT
-            if self == Facing.LEFT:
-                return Facing.DOWN
-            if self == Facing.DOWN:
-                return Facing.RIGHT
-            if self == Facing.RIGHT:
-                return Facing.UP
+            return Facing((y, -x))
+        elif direction == '2':
+            return Facing((-x, -y))
 
     def code(self):
         if self == Facing.RIGHT:
@@ -78,27 +67,18 @@ class Facing(Enum):
 
 
 CUBE_EDGES: list[tuple[
-    int | tuple[int, int],
-    int | tuple[int, int],
+    tuple[int, int],
     Facing,
-    int | Callable[[int, int], int],
-    int | Callable[[int, int], int],
+    tuple[int, int],
     Facing,
 ]] = [
-    ((50, 99), -1, Facing.UP, 0, lambda x, y: x + 100, Facing.RIGHT),
-    ((100, 149), -1, Facing.UP, lambda x, y: x - 100, 199, Facing.UP),
-    (49, (0, 49), Facing.LEFT, 0, lambda x, y: 149 - y, Facing.RIGHT),
-    (150, (0, 49), Facing.RIGHT, 99, lambda x, y: 149 - y, Facing.LEFT),
-    ((100, 149), 50, Facing.DOWN, 99, lambda x, y: x - 50, Facing.LEFT),
-    (49, (50, 99), Facing.LEFT, lambda x, y: y - 50, 100, Facing.DOWN),
-    (100, (50, 99), Facing.RIGHT, lambda x, y: y + 50, 49, Facing.UP),
-    ((0, 49), 99, Facing.UP, 50, lambda x, y: x + 50, Facing.RIGHT),
-    (-1, (100, 149), Facing.LEFT, 50, lambda x, y: 149 - y, Facing.RIGHT),
-    (100, (100, 149), Facing.RIGHT, 149, lambda x, y: 149 - y, Facing.LEFT),
-    ((50, 99), 150, Facing.DOWN, 49, lambda x, y: x + 100, Facing.LEFT),
-    (-1, (150, 199), Facing.LEFT, lambda x, y: y - 100, 0, Facing.DOWN),
-    (50, (150, 199), Facing.RIGHT, lambda x, y: y - 100, 149, Facing.UP),
-    ((0, 49), 200, Facing.DOWN, lambda x, y: x + 100, 0, Facing.DOWN),
+    ((1, 0), Facing.UP, (0, 3), Facing.RIGHT),
+    ((1, 0), Facing.LEFT, (0, 2), Facing.RIGHT),
+    ((2, 0), Facing.UP, (0, 3), Facing.UP),
+    ((2, 0), Facing.RIGHT, (1, 2), Facing.LEFT),
+    ((2, 0), Facing.DOWN, (1, 1), Facing.LEFT),
+    ((1, 1), Facing.LEFT, (0, 2), Facing.DOWN),
+    ((1, 2), Facing.DOWN, (0, 3), Facing.LEFT),
 ]
 
 
@@ -125,34 +105,36 @@ class Mover:
         old_facing = facing
         x, y = position
         delta_x, delta_y = facing.value
-        new_x, new_y = x + delta_x, y + delta_y
-        if not (
-            0 <= new_y < len(self.monkey_map)
-            and 0 <= new_x < len(self.monkey_map[new_y])
-            and self.monkey_map[new_y][new_x] != ' '
-        ):
-            for old_x, old_y, older_facing, get_new_x, get_new_y, new_facing in CUBE_EDGES:
-                if older_facing != old_facing:
-                    continue
-                if isinstance(old_x, int) and new_x != old_x:
-                    continue
-                if isinstance(old_y, int) and new_y != old_y:
-                    continue
-                if isinstance(old_x, tuple) and not (old_x[0] <= new_x <= old_x[1]):
-                    continue
-                if isinstance(old_y, tuple) and not (old_y[0] <= new_y <= old_y[1]):
-                    continue
-                new_x, new_y = (
-                    (get_new_x if isinstance(get_new_x, int) else get_new_x(new_x, new_y)),
-                    (get_new_y if isinstance(get_new_y, int) else get_new_y(new_x, new_y)),
-                )
-                facing = new_facing
-                break
-        if self.monkey_map[new_y][new_x] == '#':
+        new_position = x + delta_x, y + delta_y
+        if self.get_tile(new_position) is None:
+            for old_face, old_facing, new_face, new_facing in CUBE_EDGES:
+                if not (old_facing == facing and (x // 50, y // 50) == old_face):
+                    old_facing, new_facing = new_facing.rotate('2'), old_facing.rotate('2')
+                    old_face, new_face = new_face, old_face
+                if old_facing == facing and (x // 50, y // 50) == old_face:
+                    normal_x, normal_y = x - 50 * old_face[0], y - 50 * old_face[1]
+                    temp_facing = old_facing
+                    while temp_facing != new_facing:
+                        temp_facing = temp_facing.rotate('R')
+                        normal_x, normal_y = 49 - normal_y, normal_x
+                    new_facing_x, new_facing_y = new_facing.value
+                    new_position = (
+                        normal_x + 50 * (new_face[0] - new_facing_x) + new_facing_x,
+                        normal_y + 50 * (new_face[1] - new_facing_y) + new_facing_y,
+                    )
+                    facing = new_facing
+                    break
+        if self.get_tile(new_position) == '#':
             return position, old_facing
         else:
-            assert self.monkey_map[new_y][new_x] == '.'
-            return (new_x, new_y), facing
+            return new_position, facing
+
+    def get_tile(self, position: tuple[int, int]) -> str | None:
+        x, y = position
+        if 0 <= y < len(self.monkey_map) and 0 <= x < len(self.monkey_map[y]):
+            tile = self.monkey_map[y][x]
+            if tile != ' ':
+                return tile
 
 
 def use_path(path: Path, mover: Mover, on_cube: bool = False) -> tuple[tuple[int, int], Facing]:
