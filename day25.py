@@ -31,8 +31,30 @@ def add_snafu(n1: str, n2: str) -> str:
     return result.lstrip('0')
 
 
+DIGITS = '=-012'
+
+
+def snafu_to_int(snafu: str) -> int:
+    result = 0
+    for digit in snafu:
+        result *= 5
+        result += DIGITS.index(digit) - 2
+    return result
+
+
+def int_to_snafu(n: int) -> str:
+    result = ''
+    while n != 0:
+        digit = (n + 2) % 5 - 2
+        n = (n - digit) // 5
+        result = DIGITS[digit + 2] + result
+    return result
+
+
 def main():
-    print(reduce(add_snafu, (line.rstrip('\n') for line in sys.stdin), ''))
+    snafus = [line.rstrip('\n') for line in sys.stdin]
+    print(reduce(add_snafu, snafus, ''))
+    # print(int_to_snafu(sum(snafu_to_int(snafu) for snafu in snafus)))
 
 
 if __name__ == '__main__':
