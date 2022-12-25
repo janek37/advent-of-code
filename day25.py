@@ -25,10 +25,10 @@ def add_snafu_digits_with_carry(d1: str, d2: str, carry: str) -> str:
 def add_snafu(n1: str, n2: str) -> str:
     carry = '0'
     result = ''
-    for d1, d2 in zip_longest(reversed(n1), reversed(n2), fillvalue='0'):
+    for d1, d2 in zip_longest(reversed(n1), reversed('0' + n2), fillvalue='0'):
         carry, r = add_snafu_digits_with_carry(d1, d2, carry)
         result = r + result
-    return result
+    return result.lstrip('0')
 
 
 def main():
