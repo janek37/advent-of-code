@@ -32,8 +32,6 @@ def main():
     cleaned = (regex.sub(r'\1\2', re.sub(r'(\d)', r'\1\1', line, count=1)) for line in lines)
     print(sum(int(s) for s in cleaned))
     print(sum(int(find_edge_digits(line)) for line in lines))
-    # for line in lines:
-    #     print(line, find_edge_digits(line))
 
 
 if __name__ == '__main__':
