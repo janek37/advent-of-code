@@ -84,10 +84,6 @@ class Map(NamedTuple):
         return range_map[value] if range_map else value
 
     def map_range(self, range_: Range) -> list[Range]:
-        if range_.start > self.range_maps[-1].source_range.last:
-            return [range_]
-        if range_.last < self.range_maps[0].source_range.start:
-            return [range_]
         mapped_ranges = []
         current_range = range_
         while current_range:
@@ -95,25 +91,14 @@ class Map(NamedTuple):
             if not range_map:
                 mapped_ranges.append(current_range)
                 break
-            mapped_range, rest = range_map.map_range(current_range)
+            mapped_range, current_range = range_map.map_range(current_range)
             mapped_ranges.append(mapped_range)
-            current_range = rest
         return mapped_ranges
 
     def _find_range_map(self, value: int) -> RangeMap | None:
-        low = 0
-        high = len(self.range_maps)
-        while True:
-            mid = max(low, (low + high) // 2 - 1)
-            range_map = self.range_maps[mid]
-            if value in range_map:
+        for range_map in self.range_maps:
+            if range_map.source_range.last >= value:
                 return range_map
-            elif value < range_map.source_range.start:
-                high = mid + 1
-            else:
-                low = mid + 1
-            if low >= high - 1:
-                return self.range_maps[low] if low < len(self.range_maps) else None
 
 
 def optimize_map(range_maps: list[RangeMap]) -> Map:
