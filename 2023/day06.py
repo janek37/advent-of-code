@@ -19,7 +19,7 @@ def get_winning_ways_count(time: int, record: int) -> int:
     sqrt_delta = math.sqrt(time*time/4 - record)
     min_hold_time = time / 2 - sqrt_delta
     max_hold_time = time / 2 + sqrt_delta
-    return math.floor(max_hold_time) - math.ceil(min_hold_time) + 1
+    return math.ceil(max_hold_time) - math.floor(min_hold_time) - 1
 
 
 def main():
