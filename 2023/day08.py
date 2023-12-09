@@ -39,12 +39,6 @@ def find_cycle(instructions: str, nodes: Nodes, start: str) -> int:
             return i
 
 
-def lcm(numbers: list[int]) -> int:
-    if len(numbers) == 2:
-        return numbers[0] * numbers[1] // math.gcd(numbers[0], numbers[1])
-    return lcm([numbers[0], lcm(numbers[1:])])
-
-
 def main():
     instructions, nodes = parse_input(line.rstrip('\n') for line in sys.stdin)
     print(move(itertools.cycle(instructions), nodes, 'AAA', 'ZZZ'))
@@ -52,7 +46,7 @@ def main():
     periods = [find_cycle(instructions, nodes, ghost) for ghost in ghosts]
     # it happens that for every ghost the only Z position is exactly at the end of the period
     # it doesn't have to be like that, but it simplifies A LOT
-    print(lcm(periods))
+    print(math.lcm(*periods))
 
 
 if __name__ == '__main__':
