@@ -1,35 +1,34 @@
 import sys
+from functools import cache
 
-Platform = list[list[str]]
+Platform = list[str]
+
+
+def tilt_east(platform: Platform) -> Platform:
+    return [tilt_row_east(row) for row in platform]
 
 
 def tilt_north(platform: Platform) -> Platform:
-    new_platform = [list(platform[0])]
-    for row in platform[1:]:
-        new_row = []
-        for i, char in enumerate(row):
-            if char != 'O' or new_platform[-1][i] != '.':
-                new_row.append(char)
-            else:
-                new_row.append('.')
-                for j in range(len(new_platform) - 1, -1, -1):
-                    if new_platform[j][i] != '.':
-                        new_platform[j + 1][i] = 'O'
-                        break
-                    if j == 0:
-                        new_platform[j][i] = 'O'
-        new_platform.append(new_row)
-    return new_platform
+    return rotate_counterclockwise(tilt_east(rotate_clockwise(platform)))
+
+
+@cache
+def tilt_row_east(row: str) -> str:
+    return '#'.join(''.join(sorted(part)) for part in ''.join(row).split('#'))
 
 
 def rotate_clockwise(platform: Platform) -> Platform:
-    return [[row[i] for row in reversed(platform)] for i in range(len(platform[0]))]
+    return [''.join(row[i] for row in reversed(platform)) for i in range(len(platform[0]))]
+
+
+def rotate_counterclockwise(platform: Platform) -> Platform:
+    return [''.join(row[i] for row in platform) for i in range(len(platform[0]) - 1, -1, -1)]
 
 
 def spin_cycle(platform: Platform) -> Platform:
     new_platform = platform
     for _ in range(4):
-        new_platform = rotate_clockwise(tilt_north(new_platform))
+        new_platform = tilt_east(rotate_clockwise(new_platform))
     return new_platform
 
 
@@ -38,7 +37,7 @@ def get_total_load(platform: Platform) -> int:
 
 
 def main():
-    platform = [list(line.rstrip('\n')) for line in sys.stdin]
+    platform = [line.rstrip('\n') for line in sys.stdin]
     print(get_total_load(tilt_north(platform)))
     spinned_platform = platform
     spinned_platform_ahead = platform
