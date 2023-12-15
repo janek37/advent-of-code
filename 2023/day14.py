@@ -1,5 +1,6 @@
 import sys
 from functools import cache
+from itertools import count
 
 Platform = list[str]
 
@@ -42,12 +43,13 @@ def main():
     spinned_platform = platform
     spinned_platform_ahead = platform
     period = None
-    for i in range(1, 300):
+    for i in count(1):
         spinned_platform = spin_cycle(spinned_platform)
         if period is None:
             spinned_platform_ahead = spin_cycle(spin_cycle(spinned_platform_ahead))
             if spinned_platform == spinned_platform_ahead:
                 period = i
+                print(period)
         elif (1_000_000_000 - i) % period == 0:
             print(get_total_load(spinned_platform))
             break
