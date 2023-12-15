@@ -37,9 +37,7 @@ def get_total_load(platform: Platform) -> int:
     return sum(row.count('O') * (len(platform) - i) for i, row in enumerate(platform))
 
 
-def main():
-    platform = [line.rstrip('\n') for line in sys.stdin]
-    print(get_total_load(tilt_north(platform)))
+def get_total_load_after_n_cycles(platform: Platform, n: int) -> int:
     spinned_platform = platform
     spinned_platform_ahead = platform
     period = None
@@ -49,10 +47,14 @@ def main():
             spinned_platform_ahead = spin_cycle(spin_cycle(spinned_platform_ahead))
             if spinned_platform == spinned_platform_ahead:
                 period = i
-                print(period)
-        elif (1_000_000_000 - i) % period == 0:
-            print(get_total_load(spinned_platform))
-            break
+        elif (n - i) % period == 0:
+            return get_total_load(spinned_platform)
+
+
+def main():
+    platform = [line.rstrip('\n') for line in sys.stdin]
+    print(get_total_load(tilt_north(platform)))
+    print(get_total_load_after_n_cycles(platform, 1_000_000_000))
 
 
 if __name__ == '__main__':
