@@ -64,18 +64,17 @@ def dijkstra(heat_loss_map: list[list[int]], start: Position) -> int:
     width = len(heat_loss_map[0])
     height = len(heat_loss_map)
     goal = width - 1, height - 1
-    priority_queue = [(0, start, [])]
+    priority_queue = [(0, start)]
     total_heat_loss_map = defaultdict(lambda: float('infinity'))
     while priority_queue:
-        heat_loss, position, path = heapq.heappop(priority_queue)
+        heat_loss, position = heapq.heappop(priority_queue)
         if (position.x, position.y) == goal and position.run >= position.min_run:
             return heat_loss
         for new_position in position.neighbors(width, height):
             new_heat_loss = heat_loss + heat_loss_map[new_position.y][new_position.x]
             if new_heat_loss < total_heat_loss_map[new_position]:
-                new_path = path + [position]
                 total_heat_loss_map[new_position] = new_heat_loss
-                heapq.heappush(priority_queue, (new_heat_loss, new_position, new_path))
+                heapq.heappush(priority_queue, (new_heat_loss, new_position))
 
 
 def main():
