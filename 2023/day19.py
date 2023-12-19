@@ -93,23 +93,25 @@ def mass_process(workflows: dict[str, Workflow]) -> int:
         rule = workflows[workflow_name].rules[rule_index]
         passing, failing = workflows[workflow_name].rules[rule_index].split_group(part_group)
 
-        if rule.target in 'AR':
-            if rule.target == 'A':
-                accepted_groups.append(passing)
-        else:
-            stack.append((passing, rule.target, 0))
+        if passing:
+            if rule.target in 'AR':
+                if rule.target == 'A':
+                    accepted_groups.append(passing)
+            else:
+                stack.append((passing, rule.target, 0))
 
-        if rule_index + 1 == len(workflows[workflow_name].rules):
-            new_workflow_name = workflows[workflow_name].final_rule
-            new_index = 0
-        else:
-            new_workflow_name = workflow_name
-            new_index = rule_index + 1
-        if new_workflow_name in 'AR':
-            if new_workflow_name == 'A':
-                accepted_groups.append(failing)
-        else:
-            stack.append((failing, new_workflow_name, new_index))
+        if failing:
+            if rule_index + 1 == len(workflows[workflow_name].rules):
+                new_workflow_name = workflows[workflow_name].final_rule
+                new_index = 0
+            else:
+                new_workflow_name = workflow_name
+                new_index = rule_index + 1
+            if new_workflow_name in 'AR':
+                if new_workflow_name == 'A':
+                    accepted_groups.append(failing)
+            else:
+                stack.append((failing, new_workflow_name, new_index))
 
     return sum(count_part_group(part_group) for part_group in accepted_groups)
 
