@@ -1,3 +1,4 @@
+import math
 import operator
 import sys
 import abc
@@ -123,7 +124,7 @@ def main():
     counters = [count_pulses(modules) for i in range(1000)]
     print(sum(counter[Pulse.LOW] for counter in counters) * sum(counter[Pulse.HIGH] for counter in counters))
     # far from general (which would be pretty impossible)
-    print(reduce(operator.mul, get_counter_ranges(modules)))
+    print(math.lcm(*get_counter_ranges(modules)))
 
 
 if __name__ == '__main__':
