@@ -1,11 +1,9 @@
 import math
-import operator
 import sys
 import abc
 from collections import deque
 from collections.abc import Iterator
 from enum import Enum
-from functools import reduce
 
 
 class Pulse(Enum):
