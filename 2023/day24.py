@@ -42,7 +42,7 @@ def find_stone_position(hailstones: list[tuple[XYZ, XYZ]]) -> XYZ:
     pos2, v2 = hailstones[1]
     pos3, v3 = hailstones[2]
     posx, posy, posz, vx, vy, vz, t1, t2, t3 = sympy.symbols("posx posy posz vx vy vz t1 t2 t3", real=True)
-    # 8 equations, 8 unknowns
+    # 9 equations, 9 unknowns
     equations = [
         sympy.Eq(posx + vx * t1, pos1.x + v1.x * t1),
         sympy.Eq(posy + vy * t1, pos1.y + v1.y * t1),
