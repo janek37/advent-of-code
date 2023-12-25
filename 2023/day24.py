@@ -68,7 +68,7 @@ def solve_linear_system(linear_system: list[list[int]]) -> list[Fraction]:
         coefficients.append(new_coef)
     solution = []
     for var_no in range(n - 1, -1, -1):
-        solution.append(sum(coef * sol for coef, sol in zip(coefficients[var_no], solution[n - var_no - 2::-1] + [1])))
+        solution.append(sum(coef * sol for coef, sol in zip(coefficients[var_no], solution[::-1] + [1])))
     return solution[::-1]
 
 
