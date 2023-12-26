@@ -119,7 +119,7 @@ def get_counter_ranges(modules: dict[str, Module]) -> Iterator[int]:
 def main():
     module_data = parse_input(line.rstrip('\n') for line in sys.stdin)
     modules = get_modules(module_data)
-    counters = [count_pulses(modules) for i in range(1000)]
+    counters = [count_pulses(modules) for _ in range(1000)]
     print(sum(counter[Pulse.LOW] for counter in counters) * sum(counter[Pulse.HIGH] for counter in counters))
     # far from general (which would be pretty impossible)
     print(math.lcm(*get_counter_ranges(modules)))

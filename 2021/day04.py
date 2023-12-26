@@ -1,5 +1,6 @@
 SIZE = 5
 
+
 def parse_input(lines):
     drawn_numbers = [int(n) for n in lines[0].strip().split(",")]
     boards = []

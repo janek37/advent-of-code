@@ -69,7 +69,6 @@ def read_packet_with_size(bit_reader):
     version = bit_reader.read(3)
     type_id = bit_reader.read(3)
     if type_id == LITERAL:
-        ind = 6
         value = read_literal(bit_reader)
     else:
         length_type_id = bit_reader.read(1)
@@ -94,7 +93,7 @@ def read_subpackets_by_total_length(bit_reader, total_length):
 
 
 def read_subpackets_by_count(bit_reader, count):
-    return [read_packet_with_size(bit_reader)[0] for i in range(count)]
+    return [read_packet_with_size(bit_reader)[0] for _ in range(count)]
 
 
 def versions(packet):

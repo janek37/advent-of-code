@@ -5,8 +5,7 @@ from itertools import product
 def dijkstra(cave, x, y):
     start = (x, y)
     priority_queue = [(0, (len(cave[0])-1, len(cave)-1))]
-    risk_map = [[float('infinity')]*len(cave[0]) for row in cave]
-    unvisited = {}
+    risk_map = [[float('infinity')]*len(cave[0]) for _ in cave]
     while priority_queue:
         risk, (x, y) = heapq.heappop(priority_queue)
         if (x, y) == start:
@@ -31,7 +30,7 @@ def neighbors(cave, x, y):
 
 # region my stupid O(V^3) algorithm
 def low_total_risk_map(cave, previous_risk_map=None):
-    risk_map = [[None]*len(cave[0]) for row in cave]
+    risk_map = [[None]*len(cave[0]) for _ in cave]
     for y in range(len(cave)-1, -1, -1):
         for x in range(len(cave[y])-1, -1, -1):
             options = [risk_map[y1][x1] + cave[y1][x1] for x1, y1 in forward(cave, x, y)]
@@ -60,6 +59,7 @@ def forward(cave, x, y):
         yield x, y+1
     if x+1 < len(cave[0]):
         yield x+1, y
+
 
 def backward(x, y):
     if y > 0:

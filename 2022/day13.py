@@ -58,7 +58,7 @@ def main():
     ))
     sorted_packets = sorted(
         packets + [[[2]], [[6]]],
-        key=functools.cmp_to_key(lambda l, r: compare_packet_parts(l, r).value)
+        key=functools.cmp_to_key(lambda left, right: compare_packet_parts(left, right).value)
     )
     print((sorted_packets.index([[2]])+1) * (sorted_packets.index([[6]])+1))
 

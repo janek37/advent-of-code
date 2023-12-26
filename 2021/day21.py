@@ -2,8 +2,10 @@ from collections import defaultdict
 from dataclasses import dataclass
 from itertools import cycle
 
+
 def add_pos(pos, steps):
     return (pos + steps - 1) % 10 + 1
+
 
 @dataclass
 class Player:
@@ -45,7 +47,6 @@ MULTIROLLS = [(3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1)]
 
 def multimove(multistate, player_no):
     new_multistate = defaultdict(int)
-    wins = 0
     for state, unicount in multistate.items():
         if state[0] == 'win':
             new_multistate[state] += unicount

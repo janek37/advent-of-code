@@ -1,8 +1,8 @@
-#############
-#01.2.3.4.56#
-###7#9#B#D###
-  #8#A#C#E#
-  #########
+# #############
+# #01.2.3.4.56#
+# ###7#9#B#D###
+#   #8#A#C#E#
+#   #########
 
 HOMES_ITEMS = [
     ('A', [7, 8]),
@@ -28,6 +28,7 @@ COST = {
 }
 
 GOAL = [list('AABBCCDD'), list('AAAABBBBCCCCDDDD')]
+
 
 # (from, to), distance, passing
 def make_moves_from(start, homes):
@@ -110,6 +111,7 @@ def cost_candidates(state, part):
 
 
 memoized = {}
+
 
 def find_lowest_cost(state, part):
     if (tuple(state), part) in memoized:

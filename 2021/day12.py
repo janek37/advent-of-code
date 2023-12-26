@@ -56,8 +56,8 @@ def parse_input(lines):
 def main():
     import sys
     edges = parse_input(sys.stdin)
-    print(sum(1 for p in find_paths(edges)))
-    print(sum(1 for p in find_paths2(edges)))
+    print(sum(1 for _ in find_paths(edges)))
+    print(sum(1 for _ in find_paths2(edges)))
 
 
 if __name__ == '__main__':

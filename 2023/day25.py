@@ -1,5 +1,5 @@
 import sys
-from collections import defaultdict, Counter
+from collections import defaultdict
 from collections.abc import Iterator
 
 

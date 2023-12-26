@@ -12,7 +12,7 @@ def parse_sn(s, start=0):
 
 def parse_input(lines):
     for line in lines:
-        yield(parse_sn(line)[0])
+        yield parse_sn(line)[0]
 
 
 def add_sn(sn1, sn2):

@@ -1,4 +1,3 @@
-from functools import lru_cache
 from collections import Counter, defaultdict
 
 
@@ -20,6 +19,7 @@ def add_counts(counts1, counts2):
 
 memoized = {}
 
+
 def count_inserted_pair(pair, rules, step_count):
     if (pair, step_count) in memoized:
         return memoized[(pair, step_count)]
@@ -38,6 +38,7 @@ def count_inserted_pair(pair, rules, step_count):
         counts[rules[pair]] += 1
     memoized[(pair, step_count)] = counts
     return counts
+
 
 def count_inserted(template, rules, step_count):
     counts = defaultdict(int)

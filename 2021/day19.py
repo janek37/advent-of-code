@@ -1,5 +1,3 @@
-from itertools import product, chain
-
 MIN_OVERLAP = 12
 
 ROTATIONS = [

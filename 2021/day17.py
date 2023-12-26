@@ -1,5 +1,6 @@
 import re
 
+
 def parse_input(s):
     results = re.findall(r'target area: x=(\d+)..(\d+), y=(-\d+)..(-\d+)', s)
     x0, x1, y0, y1 = (int(x) for x in results[0])

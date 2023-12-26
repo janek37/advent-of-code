@@ -9,23 +9,23 @@ def count_ones(binary_numbers):
 
 
 def get_gamma_epsilon(binary_numbers):
-    l = len(binary_numbers)
+    length = len(binary_numbers)
     counts = count_ones(binary_numbers)
-    gamma_str = ''.join('1' if c > l/2 else '0' for c in counts)
-    epsilon_str = ''.join('1' if c <= l/2 else '0' for c in counts)
+    gamma_str = ''.join('1' if c > length/2 else '0' for c in counts)
+    epsilon_str = ''.join('1' if c <= length/2 else '0' for c in counts)
     return int(gamma_str, 2), int(epsilon_str, 2)
 
 
 def filter_numbers(binary_numbers, position, prefer_most, tie_breaker):
-    l = len(binary_numbers)
+    length = len(binary_numbers)
     one_count = sum(1 for bn in binary_numbers if bn[position] == '1')
-    if one_count == l/2:
+    if one_count == length/2:
         bit = tie_breaker
     else:
         if prefer_most:
-            bit = '1' if one_count > l/2 else '0'
+            bit = '1' if one_count > length/2 else '0'
         else:
-            bit = '0' if l > one_count > l/2 else '1'
+            bit = '0' if length > one_count > length/2 else '1'
     return [bn for bn in binary_numbers if bn[position] == bit]
 
 

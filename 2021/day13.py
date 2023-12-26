@@ -13,7 +13,6 @@ def parse_input(lines):
 
 def make_fold(dots, fold):
     axis, value = fold
-    overlap = 0
     new_dots = set()
     for x, y in dots:
         if axis == 'x' and x > value:

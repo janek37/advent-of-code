@@ -1,6 +1,6 @@
 def next_day(population):
     p0, p1, p2, p3, p4, p5, p6, p7, p8 = population
-    return (p1, p2, p3, p4, p5, p6, p0+p7, p8, p0)
+    return p1, p2, p3, p4, p5, p6, p0+p7, p8, p0
 
 
 def after_days(population, days):
@@ -25,5 +25,5 @@ def main():
     print(sum(after_days(population, 256)))
 
 
-if __name__  == '__main__':
+if __name__ == '__main__':
     main()

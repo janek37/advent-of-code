@@ -52,7 +52,9 @@ def get_destination_count(graph: dict[Position, list[Position]], start: Position
     return len(position_set)
 
 
-def get_big_destinations(graph: dict[Position, list[Position]], width: int, height: int, start: BigPosition, steps: int) -> set[BigPosition]:
+def get_big_destinations(
+    graph: dict[Position, list[Position]], width: int, height: int, start: BigPosition, steps: int
+) -> set[BigPosition]:
     position_set = {start}
     for i in range(steps):
         new_set = set()
@@ -77,7 +79,9 @@ def get_big_positions_by_grid(big_positions: set[BigPosition]) -> dict[tuple[int
     return counts
 
 
-def get_big_destination_count(graph: dict[Position, list[Position]], width: int, height: int, start: Position, steps: int) -> int:
+def get_big_destination_count(
+    graph: dict[Position, list[Position]], width: int, height: int, start: Position, steps: int
+) -> int:
     big_start = BigPosition(start, 0, 0)
     # could be optimized by not simulating squares that are already filled
     big_positions = get_big_destinations(graph, width, height, big_start, steps % width + width*2)

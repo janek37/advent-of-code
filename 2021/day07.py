@@ -1,17 +1,17 @@
-def median(l):
-    return sorted(l)[len(l)//2]
+def median(crabs):
+    return sorted(crabs)[len(crabs) // 2]
 
 
-def mean(l):
-    return round(sum(l)/len(l))
+def mean(crabs):
+    return round(sum(crabs) / len(crabs))
 
 
-def total_fuel(l, position):
-    return sum(abs(crab - position) for crab in l)
+def total_fuel(crabs, position):
+    return sum(abs(crab - position) for crab in crabs)
 
 
-def total_fuel2(l, position):
-    distances = (abs(crab - position) for crab in l)
+def total_fuel2(crabs, position):
+    distances = (abs(crab - position) for crab in crabs)
     return sum(d*(d+1)/2 for d in distances)
 
 

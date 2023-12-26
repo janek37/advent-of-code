@@ -3,7 +3,7 @@ def parse_input(input_lines):
         line_ends = input_line.strip().split(' -> ')
         x1, y1 = [int(s) for s in line_ends[0].split(',')]
         x2, y2 = [int(s) for s in line_ends[1].split(',')]
-        yield (x1, y1, x2, y2)
+        yield x1, y1, x2, y2
 
 
 def filter_vertical_horizontal(lines):
@@ -17,8 +17,8 @@ def get_points(line):
     elif y1 == y2:
         return set((x, y1) for x in range(min(x1, x2), max(x1, x2)+1))
     else:
-        l = abs(x1 - x2)
-        return set(((x1*i + x2*(l-i))//l, (y1*i + y2*(l-i))//l) for i in range(0, l+1))
+        dist = abs(x1 - x2)
+        return set(((x1*i + x2*(dist-i))//dist, (y1*i + y2*(dist-i))//dist) for i in range(0, dist+1))
 
 
 def get_intersections(lines_points):
