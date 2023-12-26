@@ -14,8 +14,7 @@ def parse_input(lines: Iterator[str]) -> dict[str, list[str]]:
     return graph
 
 
-def get_component_size(graph: dict[str, list[str]]) -> int:
-    start = list(graph)[0]
+def get_component_size(graph: dict[str, list[str]], start: str) -> int:
     component = {start}
     middle_edges = {(start, end) for end in graph[start]}
     while len(middle_edges) > 3:
@@ -34,8 +33,12 @@ def get_component_size(graph: dict[str, list[str]]) -> int:
 
 def main():
     graph = parse_input(line.rstrip('\n') for line in sys.stdin)
-    n = get_component_size(graph)
-    print(n * (len(graph) - n))
+    size = 0
+    for start in graph:
+        size = get_component_size(graph, start)
+        if size < len(graph):
+            break
+    print(size * (len(graph) - size))
 
 
 if __name__ == '__main__':
