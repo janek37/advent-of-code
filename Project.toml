@@ -1,3 +1,4 @@
 [deps]
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 MD5 = "6ac74813-4b46-53a4-afec-0b5dc9d7885c"
 Permutations = "2ae35dd2-176d-5d53-8349-f30d82d94d4f"
