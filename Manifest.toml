@@ -2,24 +2,47 @@
 
 julia_version = "1.10.2"
 manifest_format = "2.0"
-project_hash = "6ea5205dd7737c926a447b2bbaeb3a8cfb0d7c0f"
+project_hash = "5b5a2694739ce6191640548926a08ee1fef9199d"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+
+[[deps.Base64]]
+uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
 [[deps.Combinatorics]]
 git-tree-sha1 = "08c8b6831dc00bfea825826be0bc8336fc369860"
 uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
 version = "1.0.2"
 
+[[deps.Compat]]
+deps = ["TOML", "UUIDs"]
+git-tree-sha1 = "c955881e3c981181362ae4088b35995446298b80"
+uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
+version = "4.14.0"
+weakdeps = ["Dates", "LinearAlgebra"]
+
+    [deps.Compat.extensions]
+    CompatLinearAlgebraExt = "LinearAlgebra"
+
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 version = "1.1.0+0"
 
+[[deps.DataStructures]]
+deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
+git-tree-sha1 = "0f4b5d62a88d8f59003e43c25a8a90de9eb76317"
+uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
+version = "0.18.18"
+
 [[deps.Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
+
+[[deps.InteractiveUtils]]
+deps = ["Markdown"]
+uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
 [[deps.JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
@@ -40,6 +63,10 @@ git-tree-sha1 = "1576f756617d31eb397a4a517b68562fd28dc2b4"
 uuid = "6ac74813-4b46-53a4-afec-0b5dc9d7885c"
 version = "0.2.3"
 
+[[deps.Markdown]]
+deps = ["Base64"]
+uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
+
 [[deps.Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
@@ -47,6 +74,11 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
 version = "0.3.23+4"
+
+[[deps.OrderedCollections]]
+git-tree-sha1 = "dfdf5519f235516220579f949664f1bf44e741c5"
+uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
+version = "1.6.3"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
