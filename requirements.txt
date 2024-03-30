@@ -1,1 +1,1 @@
-advent-of-code-data>=1.3.2
+advent-of-code-data>=2.0.1
