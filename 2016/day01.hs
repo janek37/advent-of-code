@@ -19,13 +19,15 @@ instructions s =
             (w, s'') = break p s'
 
 distance :: [(Char, Int)] -> Int
-distance instructions = let (x, y) = destination (0, 0) North instructions in abs x + abs y
+distance instructions = abs x + abs y
+    where (x, y) = destination instructions
 
-destination :: (Int, Int) -> Direction -> [(Char, Int)] -> (Int, Int)
-destination loc dir [] = loc
-destination loc dir ((side, dist):instructions) =
-    let newDir = turn dir side in
-        destination (move loc newDir dist) newDir instructions
+destination :: [(Char, Int)] -> (Int, Int)
+destination instructions = fst (foldl turnAndMove ((0, 0), North) instructions)
+
+turnAndMove (loc, dir) (side, dist) =
+    (move loc newDir dist, newDir)
+    where newDir = turn dir side
 
 turn :: Direction -> Char -> Direction
 turn dir 'L' = turnLeft dir
