@@ -1,8 +1,10 @@
+module Day06 where
+
 import System.IO
 import Data.List (sort)
 
 
-main = do
+day06 = do
     s <- getContents
     let transposed = transpose (lines s)
     putStrLn (map mostCommon transposed)

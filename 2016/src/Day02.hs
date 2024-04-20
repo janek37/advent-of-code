@@ -1,8 +1,10 @@
+module Day02 where
+
 import System.IO
 import Data.Char
 
 
-main = do
+day02 = do
     s <- getContents
     putStrLn (code (words s))
     putStrLn (code2 (words s))

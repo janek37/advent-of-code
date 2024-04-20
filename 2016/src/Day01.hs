@@ -1,10 +1,12 @@
+module Day01 where
+
 import System.IO
 import Data.Char (digitToInt)
 import Data.Foldable (find)
 
 data Direction = North | South | West | East
 
-main = do
+day01 = do
     s <- getLine
     print (distance (instructions s))
     print (revisitedDistance (instructions s))

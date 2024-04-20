@@ -1,4 +1,4 @@
 #!/bin/bash
 . run_utils.sh
 
-aocd $day $year | runghc $year/day$day.hs
+aocd $day $year | cabal v2-run aoc$year $day

@@ -1,8 +1,10 @@
+module Day09 where
+
 import System.IO
 import Data.Char
 
 
-main = do
+day09 = do
     s <- getContents
     let file = filter (not . isSpace) s
     print $ decompressedLength parser1 file

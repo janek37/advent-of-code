@@ -1,9 +1,11 @@
+module Day13 where
+
 import System.IO
 import qualified Data.Set as Set
 import Data.List (findIndex)
 
 
-main = do
+day13 = do
     s <- getLine
     let favNumber = read s :: Int
     let layers = getLayers 1 1 (isOpenSpace favNumber)

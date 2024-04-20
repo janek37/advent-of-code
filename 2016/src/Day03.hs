@@ -1,7 +1,9 @@
+module Day03 where
+
 import System.IO
 
 
-main = do
+day03 = do
     s <- getContents
     let parsed = map (map read . words) (lines s)
     print (count isTriangle parsed)

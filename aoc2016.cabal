@@ -1,0 +1,51 @@
+cabal-version:      3.0
+name:               aoc2016
+version:            0.1.0.0
+-- synopsis:
+-- description:
+license:            NONE
+-- copyright:
+build-type:         Simple
+-- extra-source-files:
+
+common warnings
+    ghc-options: -Wall
+
+executable aoc2016
+    import:           warnings
+    main-is:          Main.hs
+    other-modules:
+        Day01
+        Day02
+        Day03
+        Day04
+        Day05
+        Day06
+        Day07
+        Day08
+        Day09
+        Day10
+        Day11
+        Day12
+        Day13
+        --Day14
+        --Day15
+        --Day16
+        --Day17
+        --Day18
+        --Day19
+        --Day20
+        --Day21
+        --Day22
+        --Day23
+        --Day24
+        --Day25
+    build-depends:
+        base ^>=4.17.2.1,
+        containers,
+        base16-bytestring >= 1.0.2 && < 1.1,
+        cryptohash-md5 >= 0.11.101 && < 0.12,
+        regex-tdfa >= 1.3.2 && < 1.4,
+        utf8-string >= 1.0.2 && < 1.1,
+    hs-source-dirs:   2016/src
+    default-language: GHC2021

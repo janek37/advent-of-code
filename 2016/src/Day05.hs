@@ -1,3 +1,5 @@
+module Day05 where
+
 import System.IO
 
 import Crypto.Hash.MD5
@@ -7,7 +9,7 @@ import Data.Char (isOctDigit, ord)
 import Data.Foldable
 
 
-main = do
+day05 = do
     s <- getLine
     let suffixes = findSuffixes s 0
     let interestingHashes = map (BU.toString . md5digest s) suffixes

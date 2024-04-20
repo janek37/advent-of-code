@@ -1,8 +1,10 @@
+module Day08 where
+
 import System.IO
 import Text.Regex.TDFA
 
 
-main = do
+day08 = do
     s <- getContents
     let operations = map parseOperation (lines s)
     print (sum ([(fromEnum . getPixel operations) (x, y) | x <- [0 .. 49], y <- [0 .. 5]]))

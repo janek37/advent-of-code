@@ -1,10 +1,12 @@
+module Day11 where
+
 import System.IO
 import Text.Regex.TDFA
 import Data.List (isSuffixOf, nub, findIndex, sort)
 import Data.Function (fix)
 
 
-main = do
+day11 = do
     s <- getContents
     let state = stateFromFloors $ map parseLine (lines s)
     let Just moveCount = minMoves state

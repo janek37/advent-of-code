@@ -1,10 +1,12 @@
+module Day10 where
+
 import System.IO
 import Data.List
 import Text.Regex.TDFA
 import Control.Arrow (Arrow(first))
 
 
-main = do
+day10 = do
     s <- getContents
     let instructions = lines s
     let valueInstructions = map parseValues $ filter (isPrefixOf "value") instructions

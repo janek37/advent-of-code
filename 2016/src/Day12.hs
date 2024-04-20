@@ -1,10 +1,12 @@
+module Day12 where
+
 import System.IO
 import Data.Char (isDigit)
 import Data.IntMap.CharMap2
 import Data.List (findIndex)
 
 
-main = do
+day12 = do
     s <- getContents
     let instructions = optimize $ Prelude.map (parseLine . words) (lines s)
     let registers = run instructions $ fromList [('a', 0), ('b', 0), ('c', 0), ('d', 0)]

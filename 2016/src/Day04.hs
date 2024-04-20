@@ -1,3 +1,5 @@
+module Day04 where
+
 import System.IO
 import Text.Regex.TDFA
 import Data.List (sort)
@@ -5,7 +7,7 @@ import Data.Char
 import Data.Foldable (find)
 
 
-main = do
+day04 = do
     s <- getContents
     let realRooms = filter isReal (map parseLine (lines s))
     print (sum (map (\(n, s, c) -> s) realRooms))

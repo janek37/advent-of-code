@@ -1,8 +1,10 @@
+module Day07 where
+
 import System.IO
 import Data.List (isInfixOf)
 
 
-main = do
+day07 = do
     s <- getContents
     let ips = lines s
     print (sum (map (fromEnum . isTLS) ips))
