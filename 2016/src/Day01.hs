@@ -1,22 +1,21 @@
 module Day01 where
 
-import System.IO
-import Data.Char (digitToInt)
 import Data.Foldable (find)
 
 data Direction = North | South | West | East
 
+day01 :: IO ()
 day01 = do
     s <- getLine
-    print (distance (instructions s))
-    print (revisitedDistance (instructions s))
+    print (distance (parseInstructions s))
+    print (revisitedDistance (parseInstructions s))
 
-instructions :: String -> [(Char, Int)]
-instructions s =
+parseInstructions :: String -> [(Char, Int)]
+parseInstructions s =
     let p ch = ch == ',' || ch == ' ' in
     case dropWhile p s of
     "" -> []
-    s' -> (head w, read (tail w) :: Int): instructions s''
+    s' -> (head w, read (tail w) :: Int): parseInstructions s''
         where
             (w, s'') = break p s'
 
@@ -27,6 +26,7 @@ distance instructions = abs x + abs y
 destination :: [(Char, Int)] -> (Int, Int)
 destination instructions = fst (foldl turnAndMove ((0, 0), North) instructions)
 
+turnAndMove :: ((Int, Int), Direction) -> (Char, Int) -> ((Int, Int), Direction)
 turnAndMove (loc, dir) (side, dist) =
     (move loc newDir dist, newDir)
     where newDir = turn dir side
@@ -34,6 +34,7 @@ turnAndMove (loc, dir) (side, dist) =
 turn :: Direction -> Char -> Direction
 turn dir 'L' = turnLeft dir
 turn dir 'R' = turnRight dir
+turn dir _ = dir
 
 turnLeft, turnRight :: Direction -> Direction
 turnLeft dir = case dir of
@@ -55,10 +56,14 @@ move (x, y) dir dist = case dir of
     East -> (x + dist, y)
 
 revisitedDistance :: [(Char, Int)] -> Int
-revisitedDistance instructions = let Just (x, y) = revisited (0, 0) North instructions [(0, 0)] in abs x + abs y
+revisitedDistance instructions =
+    case maybeLocation of
+        Just (x, y) -> abs x + abs y
+        Nothing -> 0
+    where maybeLocation =revisited (0, 0) North instructions [(0, 0)]
 
 revisited :: (Int, Int) -> Direction -> [(Char, Int)] -> [(Int, Int)] -> Maybe (Int, Int)
-revisited pos dir [] visited = Nothing
+revisited _ _ [] _ = Nothing
 revisited pos dir ((side, dist):instructions) visited =
     let newSegment = segment pos (turn dir side) dist
         intersection = find (`elem` visited) newSegment

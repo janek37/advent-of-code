@@ -1,9 +1,9 @@
 module Day09 where
 
-import System.IO
 import Data.Char
 
 
+day09 :: IO ()
 day09 = do
     s <- getContents
     let file = filter (not . isSpace) s
@@ -12,7 +12,7 @@ day09 = do
 
 
 decompressedLength :: (String -> (Int, String)) -> String -> Int
-decompressedLength parser "" = 0
+decompressedLength _ "" = 0
 decompressedLength parser s
     | head s == '('     = let (parsed, rest) = parser $ tail s in parsed + decompressedLength parser rest
     | otherwise         = 1 + decompressedLength parser (tail s)

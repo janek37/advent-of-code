@@ -1,26 +1,29 @@
 module Day13 where
 
-import System.IO
 import qualified Data.Set as Set
 import Data.List (findIndex)
 
 
+day13 :: IO ()
 day13 = do
     s <- getLine
     let favNumber = read s :: Int
     let layers = getLayers 1 1 (isOpenSpace favNumber)
-    let Just steps = findIndex ((31, 39) `Set.member`) layers
-    print steps
+    let maybeSteps = findIndex ((31, 39) `Set.member`) layers
+    mapM_ print maybeSteps
     print $ sum $ map Set.size (take 51 layers)
 
+magicFormula :: Int -> Int -> Int
 magicFormula x y = x*x + 3*x + 2*x*y + y + y*y
 
+isOpenSpace :: Int -> Int -> Int -> Bool
 isOpenSpace favNumber x y = even $ countBinaryOnes (magicFormula x y + favNumber)
 
+countBinaryOnes :: Int -> Int
 countBinaryOnes n
     | n == 0        = 0
     | even n        = countBinaryOnes (n `div` 2)
-    | odd n         = 1 + countBinaryOnes (n `div` 2)
+    | otherwise     = 1 + countBinaryOnes (n `div` 2)
 
 getLayers :: Int -> Int -> (Int -> Int -> Bool) -> [Set.Set (Int, Int)]
 getLayers x0 y0 isOpen = layers'

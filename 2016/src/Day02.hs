@@ -1,14 +1,15 @@
 module Day02 where
 
-import System.IO
 import Data.Char
 
 
+day02 :: IO ()
 day02 = do
     s <- getContents
     putStrLn (code (words s))
     putStrLn (code2 (words s))
 
+code :: [String] -> String
 code = map (\n -> chr (n + 48)) . tail . scanl (foldl move) 5
 
 
@@ -25,8 +26,10 @@ move n 'L'
 move n 'R'
     | mod n 3 == 0 = n
     | otherwise = n + 1
+move n _ = n
 
 
+keypad :: [String]
 keypad =
    ["  1  ",
     " 234 ",
@@ -49,3 +52,4 @@ move2' (x, y) 'U' = (x, y-1)
 move2' (x, y) 'D' = (x, y+1)
 move2' (x, y) 'L' = (x-1, y)
 move2' (x, y) 'R' = (x+1, y)
+move2' p _ = p

@@ -1,18 +1,17 @@
 module Day12 where
 
-import System.IO
 import Data.Char (isDigit)
 import Data.IntMap.CharMap2
-import Data.List (findIndex)
 
 
+day12 :: IO ()
 day12 = do
     s <- getContents
     let instructions = optimize $ Prelude.map (parseLine . words) (lines s)
     let registers = run instructions $ fromList [('a', 0), ('b', 0), ('c', 0), ('d', 0)]
     print (registers ! 'a')
-    let registers = run instructions $ fromList [('a', 0), ('b', 0), ('c', 1), ('d', 0)]
-    print (registers ! 'a')    
+    let registers' = run instructions $ fromList [('a', 0), ('b', 0), ('c', 1), ('d', 0)]
+    print (registers' ! 'a')    
 
 
 data Instruction = Set Int Char | Copy Char Char | Inc Char | Dec Char | Jnz Char Int | Jump Int | Add Char Char | Noop deriving Show
@@ -31,6 +30,7 @@ parseLine parts
             Jump (read $ parts !! 2)
         else
             Jnz (head $ parts !! 1) (read $ parts !! 2)
+    | otherwise                 = Noop
 
 newtype State = State (Int, CharMap Int) deriving Show
 
@@ -60,13 +60,8 @@ optimize instructions =
         Nothing -> if Prelude.null instructions then [] else head instructions : optimize (tail instructions)
     where prefix = take 3 instructions
 
+maybeOptimizeAddition :: [Instruction] -> Maybe [Instruction]
 maybeOptimizeAddition instructions =
     case instructions of
         [Inc reg1, Dec reg2, Jnz reg3 n] -> if reg2 == reg3 && n == -2 then Just [Add reg2 reg1, Noop, Noop] else Nothing
         _ -> Nothing
-
-enumerate =
-    enumerateFrom 0
-    where
-        enumerateFrom i [] = []
-        enumerateFrom i (h : t) = (i, h) : enumerateFrom (i+1) t

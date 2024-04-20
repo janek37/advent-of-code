@@ -1,9 +1,9 @@
 module Day08 where
 
-import System.IO
 import Text.Regex.TDFA
 
 
+day08 :: IO ()
 day08 = do
     s <- getContents
     let operations = map parseOperation (lines s)
@@ -17,20 +17,36 @@ parseOperation :: String -> Operation
 parseOperation s
     | s =~ "rect [0-9]+x[0-9]+"                 = parseRect s
     | s =~ "rotate row y=[0-9]+ by [0-9]+"      = parseRotateRow s
-    | s =~ "rotate column x=[0-9]+ by [0-9]+"   = parseRotateColumn s
+    | otherwise                                 = parseRotateColumn s
 
+parseRect :: String -> Operation
 parseRect s =
     Rect (read width, read height)
-    where [width, height] = getAllTextMatches (s =~ "[0-9]+")
+    where
+        matches = getAllTextMatches (s =~ "[0-9]+")
+        (width, height) = case matches of
+            [w, h] -> (w, h)
+            _ -> ("", "")
 
+parseRotateRow :: String -> Operation
 parseRotateRow s =
     RotateRow (read y, read offset)
-    where [y, offset] = getAllTextMatches (s =~ "[0-9]+")
+    where
+        matches = getAllTextMatches (s =~ "[0-9]+")
+        (y, offset) = case matches of
+            [y', off] -> (y', off)
+            _ -> ("", "")
 
+parseRotateColumn :: String -> Operation
 parseRotateColumn s =
     RotateColumn (read x, read offset)
-    where [x, offset] = getAllTextMatches (s =~ "[0-9]+")
+    where
+        matches = getAllTextMatches (s =~ "[0-9]+")
+        (x, offset) = case matches of
+            [x', off] -> (x', off)
+            _ -> ("", "")
 
+getPixel :: [Operation] -> (Int, Int) -> Bool
 getPixel operations (x, y) = isOn
     where (_, _, isOn) = foldr applyOperation (x, y, False) operations
 

@@ -1,11 +1,10 @@
 module Day10 where
 
-import System.IO
 import Data.List
 import Text.Regex.TDFA
-import Control.Arrow (Arrow(first))
 
 
+day10 :: IO ()
 day10 = do
     s <- getContents
     let instructions = lines s
@@ -13,8 +12,9 @@ day10 = do
     let giveInstructions = map parseGives $ filter (isPrefixOf "bot") instructions
     let bots = applyValues valueInstructions
     let (completeBots, outputs) = applyGives bots giveInstructions []
-    let Just (botNo, _) = find ((== (Just 17, Just 61)) . snd) completeBots
-    print botNo
+    case find ((== (Just 17, Just 61)) . snd) completeBots of
+        Just (botNo, _) -> print botNo
+        Nothing -> return ()
     print $ product $ map snd $ filter ((< 3) . fst) outputs
 
 data Recipient = Bot Int | Output Int
@@ -24,7 +24,7 @@ applyValues instructions =
     foldl updateBots [firstBot] sorted
     where
         sorted = sort instructions
-        (firstBotNo, firstValue) = head sorted
+        (firstBotNo, _) = head sorted
         firstBot = (firstBotNo, (Nothing, Nothing))
 
 updateBots :: [(Int, (Maybe Int, Maybe Int))] -> (Int, Int) -> [(Int, (Maybe Int, Maybe Int))]
@@ -35,6 +35,7 @@ updateBots bots (botNo, value) =
     else
         (botNo, (Just value, Nothing)) : bots
 
+applyGives :: [(Int, (Maybe Int, Maybe Int))] -> [(Int, Recipient, Recipient)] -> [(Int, Int)] -> ([(Int, (Maybe Int, Maybe Int))], [(Int, Int)])
 applyGives bots giveInstructions outputs
     | all isComplete bots       = (bots, outputs)
     | otherwise                 =
@@ -42,18 +43,24 @@ applyGives bots giveInstructions outputs
         where
             (incompletePrefix, rest) = break isComplete bots
             firstComplete = head rest
-            Just instruction = find (\(n, _, _) -> n == fst firstComplete) giveInstructions
+            maybeInstruction = find (\(n, _, _) -> n == fst firstComplete) giveInstructions
             bots' = incompletePrefix ++ tail rest ++ [firstComplete]
-            (bots'', outputs') = applyGive bots' instruction outputs
+            (bots'', outputs') = case maybeInstruction of
+                Just instruction -> applyGive bots' instruction outputs
+                Nothing -> ([], [])
 
+isComplete :: (a1, (Maybe a2, Maybe a3)) -> Bool
 isComplete bot =
     case bot of
         (_, (Just _, Just _)) -> True
         _ -> False
 
+applyGive :: [(Int, (Maybe Int, Maybe Int))] -> (Int, Recipient, Recipient) -> [(Int, Int)] -> ([(Int, (Maybe Int, Maybe Int))], [(Int, Int)])
 applyGive bots (botNo, low, high) outputs = (bots'', outputs'')
     where
-        Just (_, (Just lowValue, Just highValue)) = find ((== botNo) . fst) bots
+        (lowValue, highValue) = case find ((== botNo) . fst) bots of
+            Just (_, (Just lo, Just hi)) -> (lo, hi)
+            _ -> (0, 0)
         update bots_ n value =
             if any ((== n) . fst) bots_ then
                 map (\(m, b) -> if m == n then (n, updateBot b value) else (m, b)) bots_
@@ -71,11 +78,15 @@ updateBot bot value =
     case bot of
         (Nothing, Nothing) -> (Just value, Nothing)
         (Just v, Nothing) -> (Just $ min v value, Just $ max v value)
+        _ -> (Nothing, Nothing)
 
 parseValues :: String -> (Int, Int)
 parseValues s =
-    (bot, value)
-    where [value, bot] = map read $ getAllTextMatches (s =~ "[0-9]+")
+    case matches of
+        [bot, value] -> (bot, value)
+        _ -> (0, 0)
+    where
+        matches = map read $ getAllTextMatches (s =~ "[0-9]+")
 
 parseGives :: String -> (Int, Recipient, Recipient)
 parseGives s =
