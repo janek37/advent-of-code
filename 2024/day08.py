@@ -39,18 +39,13 @@ def find_antinodes2(antenna1: tuple[int, int], antenna2: tuple[int, int], width:
     x2, y2 = antenna2
     gcd = math.gcd(abs(x2 - x1), abs(y2 - y1))
     step = (x2 - x1)//gcd, (y2 - y1)//gcd
-    for mult in range(0, 1000):
-        antinode = x1 + mult * step[0], y1 + mult * step[1]
-        if 0 <= antinode[0] < width and 0 <= antinode[1] < height:
-            yield antinode
-        else:
-            break
-    for mult in range(-1, -1000, -1):
-        antinode = x1 + mult * step[0], y1 + mult * step[1]
-        if 0 <= antinode[0] < width and 0 <= antinode[1] < height:
-            yield antinode
-        else:
-            break
+    for range_ in (range(0, 1000), range(-1, -1000, -1)):
+        for mult in range_:
+            antinode = x1 + mult * step[0], y1 + mult * step[1]
+            if 0 <= antinode[0] < width and 0 <= antinode[1] < height:
+                yield antinode
+            else:
+                break
 
 
 def find_all_antinodes2(antennae_groups: list[list[tuple[int, int]]], width: int, height: int) -> set[tuple[int, int]]:
