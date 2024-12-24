@@ -1,5 +1,17 @@
 import sys
-from typing import Iterator
+from typing import Iterator, NamedTuple
+
+
+class GateExpression(NamedTuple):
+    label: str
+    position: int
+
+
+class Mismatch(NamedTuple):
+    expr1: "GateExpression | Mismatch"
+    expr2: "GateExpression | Mismatch"
+    gate: str
+    position: int
 
 
 def parse_input(lines: Iterator[str]) -> tuple[dict[str, int], list[tuple[str, str, str, str]]]:
@@ -51,61 +63,75 @@ def get_output_value(wire_values: dict[str, int]) -> int:
     return result
 
 
-def print_z_exprs(gates: list[tuple[str, str, str, str]]) -> None:
+def find_swaps(gates: list[tuple[str, str, str, str]]) -> Iterator[tuple[str, str]]:
+    while True:
+        swap = find_swap(gates)
+        if swap:
+            yield swap
+            swap_outputs(swap[0], swap[1], gates)
+        else:
+            break
+
+
+def find_swap(gates: list[tuple[str, str, str, str]]) -> tuple[str, str]:
     gates_by_output = {output: (wire1, gate, wire2) for wire1, gate, wire2, output in gates}
-    z_exprs = {}
-    for output in gates_by_output:
-        # if output.startswith("z"):
-        z_exprs[output] = get_expr(output, gates_by_output)
-    for z, z_expr in sorted(z_exprs.items()):
-        if z_expr.count(" ") == 2:
-            print(z, "=", z_expr, gates_by_output[z])
-        if z_expr.startswith("Digit") and z != "z" + z_expr[5:]:
-            print(z, "=", z_expr)
-        if z_expr == "Xor24":
-            print(z, "=", z_expr)
+    expressions = {get_expr(output, gates_by_output): output for output in gates_by_output}
+    for expr, output in expressions.items():
+        expr = get_expr(output, gates_by_output)
+        if expr.position == -1 and output.startswith("z"):
+            expr1, expr2, gate, _ = expr
+            position = int(output[1:])
+            if gate == "XOR":
+                wire1, _, wire2 = gates_by_output[output]
+                other_wire = {expr: wire for expr, wire in zip((expr1, expr2), (wire2, wire1))}
+                if GateExpression("Carry", position) in (expr1, expr2):
+                    return (
+                        other_wire[GateExpression("Carry", position)],
+                        expressions[GateExpression("Xor", position)],
+                    )
+                if GateExpression("Xor", position) in (expr1, expr2):
+                    return (
+                        other_wire[GateExpression("Xor", position)],
+                        expressions[GateExpression("Carry", position)],
+                    )
+        elif expr.position < 0:
+            continue
+        elif expr.label == "Digit" and output != f"z{expr.position:02d}":
+            return output, f"z{expr.position:02d}"
 
 
-def get_expr(output, gates_by_output):
-    if output not in gates_by_output:
-        return output
+def get_expr(output, gates_by_output) -> GateExpression | Mismatch:
+    """
+        Digit(0) = Xor(0)
+        Digit(N) = Carry(N) XOR Xor(N)
+        Carry(1) = And(0)
+        Carry(N+1) = Partial(N) OR And(N)
+        Partial(N) = Carry(N) AND Xor(N)
+        Xor(N) = x(N) XOR y(N)
+        And(N) = x(N) AND y(N)
+    """
+    if output[0] in "xy":
+        return GateExpression(output[0], int(output[1:]))
     wire1, gate, wire2 = gates_by_output[output]
-    if wire1[1:] == wire1[1:] and min(wire1, wire2)[0] == "x" and max(wire1, wire2)[0] == "y" and gate == "XOR":
-        return "Xor" + wire1[1:]
-    if {wire1, wire2} == {"x00", "y00"} and gate == "AND":
-        return "Carry00"
-    if wire1[1:] == wire1[1:] and min(wire1, wire2)[0] == "x" and max(wire1, wire2)[0] == "y" and gate == "AND":
-        return "And" + wire1[1:]
     expr1 = get_expr(wire1, gates_by_output)
     expr2 = get_expr(wire2, gates_by_output)
-    if gate in ("AND", "XOR"):
-        carry = other = None
-        if expr1.startswith("Carry"):
-            carry, other = expr1, expr2
-        if expr2.startswith("Carry"):
-            carry, other = expr2, expr1
-        if carry and other and other.startswith("Xor"):
-            if int(carry[5:]) + 1 == int(other[3:]):
-                return ("Partial" if gate == "AND" else "Digit") + other[3:]
-    if gate == "OR":
-        partial, other = None, None
-        if expr1.startswith("Partial"):
-            partial, other = expr1, expr2
-        if expr2.startswith("Partial"):
-            partial, other = expr2, expr1
-        if partial and other and other.startswith("And"):
-            if partial[7:] == other[3:]:
-                return "Carry" + partial[7:]
-    if gate == "XOR":
-        carry = other = None
-        if expr1.startswith("Carry"):
-            carry, other = expr1, expr2
-        if expr2.startswith("Carry"):
-            carry, other = expr2, expr1
-        if carry and other and other.startswith("Xor"):
-            if int(carry[5:]) + 1 == int(other[3:]):
-                return "Partial" + other[3:]
-    return f"({expr1} {gate} {expr2})"
+    if expr1.position == expr2.position:
+        labels = {expr1.label, expr2.label}
+        if labels == {"x", "y"}:
+            if gate == "XOR":
+                return GateExpression("Xor" if expr1.position > 0 else "Digit", expr1.position)
+            elif gate == "AND":
+                if expr1.position == 0:
+                    return GateExpression("Carry", 1)
+                else:
+                    return GateExpression("And", expr1.position)
+        if labels == {"Carry", "Xor"} and gate in ("AND", "XOR"):
+            return GateExpression("Partial" if gate == "AND" else "Digit", expr1.position)
+        if labels == {"Partial", "And"} and gate == "OR":
+            return GateExpression("Carry", expr1.position + 1)
+    if expr1.position < 0 or expr2.position < 0:
+        return Mismatch(expr1, expr2, gate, -2)
+    return Mismatch(expr1, expr2, gate, -1)
 
 
 def swap_outputs(output1, output2, gates: list[tuple[str, str, str, str]]) -> None:
@@ -122,12 +148,8 @@ def swap_outputs(output1, output2, gates: list[tuple[str, str, str, str]]) -> No
 def main():
     inputs, gates = parse_input(sys.stdin)
     print(get_output_value(simulate_gates(inputs, gates)))
-    swap_outputs("z07", "swt", gates)
-    swap_outputs("z13", "pqc", gates)
-    swap_outputs("rjm", "wsv", gates)
-    swap_outputs("z31", "bgs", gates)
-    print(",".join(sorted(["z07", "swt", "z13", "pqc", "rjm", "wsv", "z31", "bgs"])))
-    # print_z_exprs(gates)
+    swap1, swap2, swap3, swap4 = find_swaps(gates)
+    print(",".join(sorted(swap1 + swap2 + swap3 + swap4)))
 
 
 if __name__ == '__main__':
