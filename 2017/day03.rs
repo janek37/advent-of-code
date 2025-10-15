@@ -30,17 +30,22 @@ struct Values {
     current: i32
 }
 
+const OFFSETS: [(i32, i32); 8] = [
+    (-1, -1), (0, -1), (1, -1),
+    (-1,  0),          (1,  0),
+    (-1,  1), (0,  1), (1,  1),
+];
+
 impl Iterator for Values {
     type Item = i32;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let offsets = vec![(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)];
         let mut sum = if self.current == 1 { 1 } else { 0 };
         let xy = get_coord(self.current);
-        for (dx, dy) in offsets.iter() {
-            let neighbor = &(xy.0+dx, xy.1+dy);
-            if self.map.contains_key(neighbor) {
-                sum += self.map.get(neighbor).unwrap()
+
+        for (dx, dy) in OFFSETS {
+            if let Some(v) = self.map.get(&(xy.0+dx, xy.1+dy)) {
+                sum += *v
             }
         }
         self.map.insert(xy, sum);
@@ -50,13 +55,7 @@ impl Iterator for Values {
 }
 
 fn get_first_larger(threshold: i32) -> Option<i32> {
-    let values = Values { map: HashMap::new(), current: 1 };
-    for value in values {
-        if value > threshold {
-            return Some(value)
-        }
-    }
-    None
+    Values { map: HashMap::new(), current: 1 }.find(|&value| value > threshold)
 }
 
 fn read_num() -> i32 {
