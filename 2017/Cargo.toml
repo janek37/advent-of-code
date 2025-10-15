@@ -1,0 +1,8 @@
+[package]
+name = "aoc2017"
+version = "0.1.0"
+
+
+[[bin]]
+name = "aoc2017"
+path = "main.rs"
