@@ -10,12 +10,17 @@ fn main() {
 }
 
 fn parse_input() -> Vec<Vec<String>> {
-    let lines = io::stdin().lines();
-    let mut phrases = Vec::new();
-    for line in lines {
-        phrases.push(line.unwrap().split_whitespace().map(|s| s.to_string()).collect());
-    }
-    phrases
+    io::stdin()
+        .lines()
+        .map(
+            |line|
+            line
+                .unwrap()
+                .split_whitespace()
+                .map(|s| s.to_string())
+                .collect()
+        )
+        .collect()
 }
 
 fn is_valid(passphrase: &&Vec<String>) -> bool {
