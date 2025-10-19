@@ -1,11 +1,6 @@
-//! ```cargo
-//! [dependencies]
-//! regex = "1"
-//! ```
 use std::io;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use regex::Regex;
 
 fn main() {
     let nodes = parse_input();
@@ -104,17 +99,22 @@ struct Node {
 
 impl Node {
     fn from(line: String) -> Node {
-        let re = Regex::new(r"(?<name>.*) \((?<weight>.*)\)(?: -> (?<child_names>.*))?").unwrap();
-        let captures = re.captures(&line).unwrap();
+        let parts: Vec<_> = line.split_whitespace().collect();
+        let name = parts[0].to_string();
+        let weight: u32 = parts[1][1 .. parts[1].len()-1].parse().unwrap();
         let child_names: Vec<String>;
-        if let Some(match_) = captures.name("child_names") {
-            child_names = match_.as_str().split(", ").map(|part| part.to_string()).collect();
-        } else {
+        if parts.len() <= 2 {
             child_names = Vec::new();
         }
+        else {
+            child_names = parts[3..]
+                .iter()
+                .map(|s| s.trim_end_matches(",").to_string())
+                .collect();
+        }
         Node {
-            name: captures.name("name").unwrap().as_str().to_string(),
-            weight: captures.name("weight").unwrap().as_str().parse().unwrap(),
+            name,
+            weight,
             child_names
         }
     }
