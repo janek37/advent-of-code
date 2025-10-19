@@ -1,38 +1,36 @@
 use std::io;
 
-const SIZE: u32 = 256;
-const SUFFIX: [u32; 5] = [17, 31, 73, 47, 23];
+const SUFFIX: [u8; 5] = [17, 31, 73, 47, 23];
 
 fn main() {
     let input = get_input();
     let lengths = parse_input(&input);
-    let mut circular_list = CircularList::new(SIZE);
-    circular_list.apply_lengths(&lengths, 1);
-    println!("{}", circular_list.fingerprint());
+    let mut hash = KnotHash::new();
+    hash.apply_lengths(&lengths, 1);
+    println!("{}", hash.fingerprint());
 
-    let new_lengths: Vec<u32> = input
-        .chars()
-        .map(|ch| ch as u32)
-        .chain(SUFFIX.iter().map(|n| *n))
+    let new_lengths: Vec<u8> = input
+        .as_bytes()
+        .iter()
+        .copied()
+        .chain(SUFFIX)
         .collect();
-    let mut new_circular_list = CircularList::new(SIZE);
-    new_circular_list.apply_lengths(&new_lengths, 64);
-    println!("{}", new_circular_list.hex_digest());
+    let mut hash2 = KnotHash::new();
+    hash2.apply_lengths(&new_lengths, 64);
+    println!("{}", hash2.hex_digest());
 }
 
-struct CircularList {
-    list: Vec<u32>
+struct KnotHash {
+    list: Vec<u8>
 }
 
-impl CircularList {
-    fn new(size: u32) -> CircularList {
-        CircularList {
-            list: (0..size).collect()
-        }
+impl KnotHash {
+    fn new() -> Self {
+        Self { list: (0..=255).collect() }
     }
 
     fn fingerprint(&self) -> u32 {
-        self.list[0] * self.list[1]
+        (self.list[0] as u32) * (self.list[1] as u32)
     }
 
     fn hex_digest(&self) -> String {
@@ -40,51 +38,35 @@ impl CircularList {
     }
 
     fn digest(&self) -> Vec<u8> {
-        (0..16)
-            .map(
-                |i|
-                self.list[16*i..16*(i+1)]
-                    .iter()
-                    .map(|n| *n)
-                    .reduce(|a, b| a ^ b)
-                    .unwrap() as u8
-            )
+        self.list
+            .chunks(16)
+            .map(|chunk| chunk.iter().copied().reduce(|a, b| a ^ b).unwrap() as u8)
             .collect()
     }
 
-    fn apply_lengths(&mut self, lengths: &Vec<u32>, rounds: u32) {
+    fn apply_lengths(&mut self, lengths: &[u8], rounds: u32) {
         let mut current_pos = 0;
         let mut skip = 0;
         for _ in 0..rounds {
-            for length in lengths.iter() {
-                if *length > SIZE {
-                    panic!("Invalid length");
-                }
-                self.reverse(current_pos, *length);
-                current_pos += length + skip;
-                current_pos %= SIZE;
-                skip += 1;
+            for &length in lengths {
+                self.reverse(current_pos, length);
+                current_pos = current_pos.wrapping_add(length).wrapping_add(skip);
+                skip = skip.wrapping_add(1);
             }
-            }
+        }
     }
 
-    fn reverse(&mut self, from: u32, length: u32) {
-        self.list = (0..SIZE)
-            .map(
-                |i|
-                if (i < from && i + SIZE >= from + length) || i >= from + length {
-                    self.list[i as usize]
-                } else {
-                    let source_index = (2*from + length - 1 - i) % SIZE;
-                    self.list[source_index as usize]
-                }
-            )
-            .collect()
+    fn reverse(&mut self, from: u8, length: u8) {
+        for i in 0..length / 2 {
+            let a = from.wrapping_add(i);
+            let b = from.wrapping_add(length.wrapping_sub(1)).wrapping_sub(i);
+            self.list.swap(a as usize, b as usize);
+        }
     }
 }
 
-fn parse_input(input: &String) -> Vec<u32> {
-    input.split(",").map(|s| s.parse().unwrap()).collect()
+fn parse_input(input: &str) -> Vec<u8> {
+    input.split(',').map(|s| s.parse().unwrap()).collect()
 }
 
 fn get_input() -> String {
