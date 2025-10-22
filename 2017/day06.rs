@@ -8,10 +8,10 @@ pub fn main() {
     println!("{}", loop_length);
 }
 
-fn find_repeated(banks: &Vec<u32>) -> (u32, u32) {
+fn find_repeated(banks: &Vec<usize>) -> (usize, usize) {
     let mut count = 0;
     let mut new_banks = banks.clone();
-    let mut seen: HashMap<Vec<u32>, u32> = HashMap::new();
+    let mut seen: HashMap<Vec<usize>, usize> = HashMap::new();
     let loop_length;
     loop {
         let new_new_banks = &redistribute(&new_banks);
@@ -26,23 +26,23 @@ fn find_repeated(banks: &Vec<u32>) -> (u32, u32) {
     (count, loop_length)
 }
 
-fn redistribute(banks: &Vec<u32>) -> Vec<u32> {
+fn redistribute(banks: &Vec<usize>) -> Vec<usize> {
     let (idx, blocks) = banks
         .iter()
         .enumerate()
-        .max_by_key(|&(i, x)| (x, -(i as i32)))
+        .max_by_key(|&(i, x)| (x, -(i as isize)))
         .unwrap();
-    let num_banks = banks.len() as u32;
+    let num_banks = banks.len();
     let small_increase = blocks / num_banks;
     let remainder = blocks % num_banks;
     banks
         .iter()
         .enumerate()
-        .map(|(i, x)| (if i == idx { 0 } else { *x }) + small_increase + (if ((i - idx - 1) as u32) % num_banks < remainder { 1 } else { 0 }))
+        .map(|(i, x)| (if i == idx { 0 } else { *x }) + small_increase + (if (num_banks + i - idx - 1) % num_banks < remainder { 1 } else { 0 }))
         .collect()
 }
 
-fn parse_input() -> Vec<u32> {
+fn parse_input() -> Vec<usize> {
     let mut line = String::new();
     let _ = io::stdin().read_line(&mut line);
     line.split_whitespace().map(|x| x.parse().unwrap()).collect()
