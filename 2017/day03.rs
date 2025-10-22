@@ -1,7 +1,7 @@
 use std::io;
 use std::collections::HashMap;
 
-fn main() {
+pub fn main() {
     let input = read_num();
     let xy = get_coord(input);
     println!("{}", xy.0.abs() + xy.1.abs());

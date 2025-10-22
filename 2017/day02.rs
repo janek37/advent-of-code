@@ -1,6 +1,6 @@
 use std::io;
 
-fn main() {
+pub fn main() {
     let rows = parse_input();
     let checksum: u32 = rows.iter().map(|row| row.iter().max().unwrap() - row.iter().min().unwrap()).sum();
     println!("{}", checksum);

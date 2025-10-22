@@ -1,6 +1,6 @@
 use std::io;
 
-fn main() {
+pub fn main() {
     let mut line = String::new();
     let _ = io::stdin().read_line(&mut line);
     let digits = line.trim_end();

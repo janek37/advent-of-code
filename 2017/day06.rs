@@ -1,7 +1,7 @@
 use std::io;
 use std::collections::HashMap;
 
-fn main() {
+pub fn main() {
     let banks = parse_input();
     let (count, loop_length) = find_repeated(&banks);
     println!("{}", count);

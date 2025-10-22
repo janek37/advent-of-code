@@ -1,7 +1,7 @@
 use std::io;
 use std::collections::HashSet;
 
-fn main() {
+pub fn main() {
     let passphrases = parse_input();
     let valid_count = passphrases.iter().filter(is_valid).count();
     println!("{}", valid_count);

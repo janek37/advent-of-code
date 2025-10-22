@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::io;
 
-fn main() {
+pub fn main() {
     let graph = parse_input();
     println!("{}", flood_fill(&graph, 0).len());
     println!("{}", count_groups(&graph));

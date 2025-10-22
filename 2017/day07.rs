@@ -2,7 +2,7 @@ use std::io;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
-fn main() {
+pub fn main() {
     let nodes = parse_input();
     println!("{}", find_root(&nodes));
     let tree = Tree::from(&nodes);

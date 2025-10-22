@@ -1,7 +1,7 @@
 use std::cmp::max;
 use std::io;
 
-fn main() {
+pub fn main() {
     let steps = parse_input();
     println!("{}", total_distance(&steps));
     let max_distance = (1..=steps.len()).map(|i| total_distance(&steps[..i])).max().unwrap();

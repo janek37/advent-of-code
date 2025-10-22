@@ -2,7 +2,7 @@ use std::io;
 
 const SUFFIX: [u8; 5] = [17, 31, 73, 47, 23];
 
-fn main() {
+pub fn main() {
     let input = get_input();
     let lengths = parse_input(&input);
     let mut hash = KnotHash::new();

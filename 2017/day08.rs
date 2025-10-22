@@ -1,7 +1,7 @@
 use std::io;
 use std::collections::HashMap;
 
-fn main() {
+pub fn main() {
     let instructions = parse_input();
     let mut context: HashMap<String, i32> = HashMap::new();
     let mut max_intermediate_value = 0;

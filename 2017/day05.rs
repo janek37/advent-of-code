@@ -1,6 +1,6 @@
 use std::io;
 
-fn main() {
+pub fn main() {
     let orig_offsets = read_nums();
     let mut offsets = orig_offsets.clone();
     let mut pointer: i32 = 0;
