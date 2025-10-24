@@ -7,7 +7,7 @@ pub fn main() {
     println!("{}", count_groups(&graph));
 }
 
-fn flood_fill(graph: &Vec<Vec<usize>>, start: usize) -> HashSet<usize> {
+fn flood_fill(graph: &[Vec<usize>], start: usize) -> HashSet<usize> {
     let mut visited: HashSet<usize> = HashSet::new();
     let mut stack: Vec<usize> = vec![start];
     while let Some(node) = stack.pop() {
@@ -21,7 +21,7 @@ fn flood_fill(graph: &Vec<Vec<usize>>, start: usize) -> HashSet<usize> {
     visited
 }
 
-fn count_groups(graph: &Vec<Vec<usize>>) -> usize {
+fn count_groups(graph: &[Vec<usize>]) -> usize {
     let mut count = 0;
     let mut current = 0;
     let mut visited: HashSet<usize> = HashSet::new();

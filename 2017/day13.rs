@@ -18,7 +18,7 @@ fn compute_severity(layers: &[(u32, u32)]) -> u32 {
 }
 
 fn is_caught(layers: &[(u32, u32)], delay: u32) -> bool {
-    layers.iter().any(|&(depth, range)| (depth + delay) % (2*range - 2) == 0)
+    layers.iter().any(|&(depth, range)| (depth + delay).is_multiple_of(2*range - 2))
 }
 
 fn parse_input() -> Vec<(u32, u32)> {

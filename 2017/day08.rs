@@ -6,10 +6,8 @@ pub fn main() {
     let mut context: HashMap<String, i32> = HashMap::new();
     let mut max_intermediate_value = 0;
     for instruction in instructions {
-        if let Some(v) = run_instruction(&mut context, &instruction) {
-            if v > max_intermediate_value {
-                max_intermediate_value = v
-            }
+        if let Some(v) = run_instruction(&mut context, &instruction) && v > max_intermediate_value {
+            max_intermediate_value = v
         }
     }
     let max_value = context.values().max().unwrap();
@@ -54,7 +52,7 @@ struct Instruction {
 }
 
 impl Instruction {
-    fn from(s: &String) -> Instruction {
+    fn from(s: &str) -> Instruction {
         let parts: Vec<_> = s.split_whitespace().collect();
         //Regex::new(r"(.*) (inc|dec) (-?\d+) if (.*) (<|>|==|!=|<=|>=) (-?\d+)").unwrap();
         let ar = parts[0];

@@ -8,9 +8,9 @@ pub fn main() {
     println!("{}", loop_length);
 }
 
-fn find_repeated(banks: &Vec<usize>) -> (usize, usize) {
+fn find_repeated(banks: &[usize]) -> (usize, usize) {
     let mut count = 0;
-    let mut new_banks = banks.clone();
+    let mut new_banks = banks.to_vec();
     let mut seen: HashMap<Vec<usize>, usize> = HashMap::new();
     let loop_length;
     loop {
@@ -26,7 +26,7 @@ fn find_repeated(banks: &Vec<usize>) -> (usize, usize) {
     (count, loop_length)
 }
 
-fn redistribute(banks: &Vec<usize>) -> Vec<usize> {
+fn redistribute(banks: &[usize]) -> Vec<usize> {
     let (idx, blocks) = banks
         .iter()
         .enumerate()

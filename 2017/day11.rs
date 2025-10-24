@@ -14,7 +14,7 @@ fn total_distance(steps: &[Direction]) -> i32 {
 }
 
 fn total_offset(steps: &[Direction]) -> (i32, i32) {
-    steps.iter().map(|d| direction_to_offsets(d)).reduce(
+    steps.iter().map(direction_to_offsets).reduce(
         |(x1, y1), (|x2, y2)| (x1 + x2, y1 + y2)
     ).unwrap()
 }

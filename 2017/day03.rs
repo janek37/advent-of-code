@@ -14,11 +14,11 @@ fn get_coord(id: i32) -> (i32, i32) {
     let offset = id - near_odd_square;
     if offset == 0 {
         (root - 1, root - 1)
-    } else if offset <= 2 * root - 1 {
+    } else if offset < 2 * root {
         (root, root - offset)
-    } else if offset <= 4 * root - 1 {
+    } else if offset < 4 * root {
         (3 * root - offset, -root)
-    } else if offset <= 6 * root - 1 {
+    } else if offset < 6 * root {
         (-root, offset - 5 * root)
     } else {
         (offset - 7 * root, root)

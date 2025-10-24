@@ -17,13 +17,13 @@ fn parse_input() -> Vec<Vec<u32>> {
     rows
 }
 
-fn find_division(row: &Vec<u32>) -> Option<u32> {
+fn find_division(row: &[u32]) -> Option<u32> {
     for i in 0..row.len() {
         for j in i + 1..row.len() {
-            if row[i] % row[j] == 0 {
+            if row[i].is_multiple_of(row[j]) {
                 return Some(row[i] / row[j]);
             }
-            if row[j] % row[i] == 0 {
+            if row[j].is_multiple_of(row[i]) {
                 return Some(row[j] / row[i]);
             }
         }

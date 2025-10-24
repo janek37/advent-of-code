@@ -17,14 +17,9 @@ pub fn main() {
     offsets = orig_offsets.clone();
     while 0 <= pointer && pointer < offsets.len() as i32 {
         let offset = offsets[pointer as usize];
-        let offset_change;
-        if offset >= 3 {
-            offset_change = -1;
-        } else {
-            offset_change = 1;
-        }
+        let offset_change= if offset >= 3 { -1 } else { 1 };
         offsets[pointer as usize] += offset_change;
-        pointer = pointer + offset;
+        pointer += offset;
         count += 1;
     }
     println!("{}", count);

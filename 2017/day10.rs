@@ -40,7 +40,7 @@ impl KnotHash {
     fn digest(&self) -> Vec<u8> {
         self.list
             .chunks(16)
-            .map(|chunk| chunk.iter().copied().reduce(|a, b| a ^ b).unwrap() as u8)
+            .map(|chunk| chunk.iter().copied().reduce(|a, b| a ^ b).unwrap())
             .collect()
     }
 

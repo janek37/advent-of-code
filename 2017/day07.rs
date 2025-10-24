@@ -1,6 +1,6 @@
-use std::io;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::io;
 
 pub fn main() {
     let nodes = parse_input();
@@ -25,7 +25,7 @@ fn find_root(nodes: &Vec<Node>) -> String {
 }
 
 fn find_bad_weight(tree: &Tree) -> Option<u32> {
-    if tree.children.len() == 0 {
+    if tree.children.is_empty() {
         None
     } else if tree.children.len() == 1 {
         find_bad_weight(&tree.children[0])
@@ -36,18 +36,13 @@ fn find_bad_weight(tree: &Tree) -> Option<u32> {
             find_bad_weight(&tree.children[1])
         }
     } else {
-        let total_weights = tree.children.iter().map(|t| t.total_weight()).collect();
+        let total_weights: Vec<u32> = tree.children.iter().map(|t| t.total_weight()).collect();
         let maybe_odd_index = find_odd_one_out(&total_weights);
         if let Some(odd_index) = maybe_odd_index {
             if let Some(weight) = find_bad_weight(&tree.children[odd_index]) {
-                return Some(weight)
+                return Some(weight);
             }
-            let good_index;
-            if odd_index == 0 {
-                good_index = 1
-            } else {
-                good_index = 0
-            }
+            let good_index = (odd_index == 0) as usize;
             Some(tree.children[odd_index].weight + total_weights[good_index] - total_weights[odd_index])
         } else {
             None
@@ -55,7 +50,7 @@ fn find_bad_weight(tree: &Tree) -> Option<u32> {
     }
 }
 
-fn find_odd_one_out(vec: &Vec<u32>) -> Option<usize> {
+fn find_odd_one_out(vec: &[u32]) -> Option<usize> {
     vec
         .iter()
         .enumerate()
@@ -65,7 +60,7 @@ fn find_odd_one_out(vec: &Vec<u32>) -> Option<usize> {
 
 struct Tree {
     weight: u32,
-    children: Vec<Tree>
+    children: Vec<Tree>,
 }
 
 impl Tree {
@@ -94,28 +89,26 @@ impl Tree {
 struct Node {
     name: String,
     weight: u32,
-    child_names: Vec<String>
+    child_names: Vec<String>,
 }
 
 impl Node {
     fn from(line: String) -> Node {
         let parts: Vec<_> = line.split_whitespace().collect();
         let name = parts[0].to_string();
-        let weight: u32 = parts[1][1 .. parts[1].len()-1].parse().unwrap();
-        let child_names: Vec<String>;
-        if parts.len() <= 2 {
-            child_names = Vec::new();
-        }
-        else {
-            child_names = parts[3..]
+        let weight: u32 = parts[1][1..parts[1].len() - 1].parse().unwrap();
+        let child_names: Vec<String> = if parts.len() <= 2 {
+            Vec::new()
+        } else {
+            parts[3..]
                 .iter()
                 .map(|s| s.trim_end_matches(",").to_string())
-                .collect();
-        }
+                .collect()
+        };
         Node {
             name,
             weight,
-            child_names
+            child_names,
         }
     }
 }
