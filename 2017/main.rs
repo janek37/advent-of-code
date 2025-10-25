@@ -14,6 +14,7 @@ mod day11;
 mod day12;
 mod day13;
 mod day14;
+mod day15;
 
 fn main() {
     let day_arg = env::args().nth(1).expect("Day argument required");
@@ -33,6 +34,7 @@ fn main() {
         day12::main,
         day13::main,
         day14::main,
+        day15::main,
     ];
 
     if let Some(func) = days.get(day - 1) {
