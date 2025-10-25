@@ -8,19 +8,10 @@ pub fn main() {
     let mut hash = KnotHash::new();
     hash.apply_lengths(&lengths, 1);
     println!("{}", hash.fingerprint());
-
-    let new_lengths: Vec<u8> = input
-        .as_bytes()
-        .iter()
-        .copied()
-        .chain(SUFFIX)
-        .collect();
-    let mut hash2 = KnotHash::new();
-    hash2.apply_lengths(&new_lengths, 64);
-    println!("{}", hash2.hex_digest());
+    println!("{}", KnotHash::hex_digest_from_str(&input));
 }
 
-struct KnotHash {
+pub struct KnotHash {
     list: Vec<u8>
 }
 
@@ -33,8 +24,9 @@ impl KnotHash {
         (self.list[0] as u32) * (self.list[1] as u32)
     }
 
-    fn hex_digest(&self) -> String {
-        self.digest().iter().map(|n| format!("{:02x}", n)).collect::<Vec<_>>().join("")
+    fn hex_digest_from_str(s: &str) -> String {
+        let digest = KnotHash::digest_from_str(s);
+        digest.iter().map(|n| format!("{:02x}", n)).collect::<Vec<_>>().join("")
     }
 
     fn digest(&self) -> Vec<u8> {
@@ -42,6 +34,20 @@ impl KnotHash {
             .chunks(16)
             .map(|chunk| chunk.iter().copied().reduce(|a, b| a ^ b).unwrap())
             .collect()
+    }
+
+    pub fn digest_from_str(s: &str) -> Vec<u8> {
+        let mut hash = KnotHash::new();
+        hash.apply_lengths(&KnotHash::lengths_from_str(s), 64);
+        hash.digest()
+    }
+
+    fn lengths_from_str(s: &str) -> Vec<u8> {
+        s.as_bytes()
+            .iter()
+            .copied()
+            .chain(SUFFIX)
+            .collect::<Vec<_>>()
     }
 
     fn apply_lengths(&mut self, lengths: &[u8], rounds: u32) {
