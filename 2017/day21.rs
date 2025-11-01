@@ -72,22 +72,20 @@ impl Image {
         let new_size = self.size / rule_size * (rule_size + 1);
         let grid_size = self.size / rule_size;
         let new_content: String = (0..new_size)
-            .map(|i| (0..new_size).map(|j|
-                new_blocks[i / (rule_size + 1) * grid_size + j / (rule_size + 1)]
-                    .get_pixel(j % (rule_size + 1), i % (rule_size + 1))
-            ).collect::<String>()).collect();
+            .flat_map(|i| (0..new_size).map({
+                let cloned_blocks = new_blocks.clone();
+                move |j|
+                    cloned_blocks[i / (rule_size + 1) * grid_size + j / (rule_size + 1)]
+                        .get_pixel(j % (rule_size + 1), i % (rule_size + 1))
+            })).collect();
         Self { content: new_content, size: new_size }
     }
 
     fn get_blocks(&self, block_size: usize) -> Vec<Self> {
-        let mut blocks: Vec<Image> = Vec::new();
         let grid_size = self.size / block_size;
-        for i in 0..grid_size {
-            for j in 0..grid_size {
-                blocks.push(self.get_block(j, i, block_size));
-            }
-        }
-        blocks
+        (0..grid_size)
+            .flat_map(|i| (0..grid_size).map(move |j| self.get_block(j, i, block_size)))
+            .collect()
     }
 
     fn get_block(&self, x0: usize, y0: usize, size: usize) -> Self {
@@ -112,9 +110,8 @@ fn rotations(block: &Image) -> Vec<String> {
         block.content.clone(),
         block.content.chars().rev().collect(),
         (0..block.size)
-            .map(|i| (0..block.size)
-                .map(|j| block.get_pixel(i, block.size - 1 - j))
-                .collect::<String>()
+            .flat_map(|i|
+                (0..block.size).map(move |j| block.get_pixel(i, block.size - 1 - j))
             )
             .collect()
     ];
@@ -122,18 +119,16 @@ fn rotations(block: &Image) -> Vec<String> {
     if block.size > 2 {
         result.push(
             (0..block.size)
-                .map(|i| (0..block.size)
-                    .map(|j| block.get_pixel(i, j))
-                    .collect::<String>()
+                .flat_map(|i|
+                    (0..block.size).map(move |j| block.get_pixel(i, j))
                 )
                 .collect()
         );
         result.push(result[4].chars().rev().collect());
         result.push(
             (0..block.size)
-                .map(|i| (0..block.size)
-                    .map(|j| block.get_pixel(block.size - 1 - j, i))
-                    .collect::<String>()
+                .flat_map(|i|
+                    (0..block.size).map(move |j| block.get_pixel(block.size - 1 - j, i))
                 )
                 .collect()
         );
