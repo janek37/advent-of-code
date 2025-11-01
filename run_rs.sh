@@ -3,7 +3,7 @@
 
 if [[ -r $year/Cargo.toml ]]; then
   cd $year
-  aocd $day $year | cargo run -q $day
+  aocd $day $year | cargo run -rq $day
 else
   aocd $day $year | rust-script $year/day$day.rs
 fi
