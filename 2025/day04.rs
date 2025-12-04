@@ -8,8 +8,6 @@ pub fn main() {
     println!("{}", count_iter_accessible(&roll_locations));
 }
 
-const OFFSETS: [(i32, i32); 8] = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)];
-
 fn count_accessible(roll_locations: &HashSet<(i32, i32)>) -> usize {
     roll_locations.iter().filter(|&&loc| is_accessible(loc, roll_locations)).count()
 }
@@ -33,6 +31,8 @@ fn remove_accessible(roll_locations: &HashSet<(i32, i32)>) -> HashSet<(i32,i32)>
         .copied()
         .collect()
 }
+
+const OFFSETS: [(i32, i32); 8] = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)];
 
 fn is_accessible((x, y): (i32, i32), roll_locations: &HashSet<(i32, i32)>) -> bool {
     OFFSETS.map(|(dx, dy)| roll_locations.contains(&(x+dx, y+dy)) as u32)
